@@ -23,7 +23,6 @@ export default function VideoEmbed({ url, title = "Embedded video" }: VideoEmbed
     <div
       style={{
         margin: "var(--space-8) 0",
-        borderRadius: "var(--radius-lg)",
         overflow: "hidden",
         aspectRatio: "16 / 9",
         position: "relative",

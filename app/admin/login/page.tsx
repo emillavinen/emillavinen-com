@@ -46,13 +46,13 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-      <div className="w-full max-w-sm bg-white border border-neutral-200 rounded-lg p-8">
-        <h1 className="text-lg font-medium mb-6">Admin</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#FFFFFF", fontFamily: "var(--font-sans)" }}>
+      <div style={{ width: "100%", maxWidth: "360px", padding: "var(--space-12) var(--space-8)" }}>
+        <h1 style={{ fontSize: "var(--text-sm)", fontWeight: 400, letterSpacing: "var(--tracking-widest)", textTransform: "uppercase", color: "var(--color-fg)", margin: "0 0 var(--space-8)" }}>Admin</h1>
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
           {step === "password" ? (
             <div>
-              <label className="block text-xs font-medium text-neutral-500 uppercase tracking-widest mb-2">
+              <label style={{ display: "block", fontSize: "var(--text-xs)", fontWeight: 400, color: "var(--color-fg-muted)", textTransform: "uppercase", letterSpacing: "var(--tracking-widest)", marginBottom: "var(--space-2)" }}>
                 Password
               </label>
               <input
@@ -61,12 +61,12 @@ export default function AdminLoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 autoFocus
                 required
-                className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-black"
+                style={{ width: "100%", border: "1px solid #d4d4d4", borderRadius: "var(--radius-md)", padding: "var(--space-2) var(--space-3)", fontSize: "var(--text-sm)", fontFamily: "var(--font-sans)", outline: "none", boxSizing: "border-box" }}
               />
             </div>
           ) : (
             <div>
-              <label className="block text-xs font-medium text-neutral-500 uppercase tracking-widest mb-2">
+              <label style={{ display: "block", fontSize: "var(--text-xs)", fontWeight: 400, color: "var(--color-fg-muted)", textTransform: "uppercase", letterSpacing: "var(--tracking-widest)", marginBottom: "var(--space-2)" }}>
                 Authenticator code
               </label>
               <input
@@ -79,20 +79,20 @@ export default function AdminLoginPage() {
                 autoFocus
                 required
                 placeholder="000000"
-                className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-black tracking-widest text-center font-mono"
+                style={{ width: "100%", border: "1px solid #d4d4d4", borderRadius: "var(--radius-md)", padding: "var(--space-2) var(--space-3)", fontSize: "var(--text-sm)", fontFamily: "var(--font-mono)", letterSpacing: "var(--tracking-widest)", textAlign: "center", outline: "none", boxSizing: "border-box" }}
               />
-              <p className="text-xs text-neutral-400 mt-2 text-center">
+              <p style={{ fontSize: "var(--text-xs)", color: "var(--color-fg-muted)", marginTop: "var(--space-2)", textAlign: "center" }}>
                 6-digit code from your authenticator app
               </p>
             </div>
           )}
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && <p style={{ fontSize: "var(--text-sm)", color: "#dc2626" }}>{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 text-sm bg-black text-white rounded hover:bg-neutral-800 disabled:opacity-50"
+            style={{ width: "100%", padding: "var(--space-2) 0", fontSize: "var(--text-sm)", fontFamily: "var(--font-sans)", background: "var(--color-fg)", color: "var(--color-bg)", border: "none", borderRadius: "var(--radius-md)", cursor: "pointer", opacity: loading ? 0.5 : 1 }}
           >
             {loading ? "Checking…" : step === "password" ? "Continue" : "Sign in"}
           </button>
@@ -101,7 +101,7 @@ export default function AdminLoginPage() {
             <button
               type="button"
               onClick={() => { setStep("password"); setTotp(""); setError(""); }}
-              className="w-full py-2 text-sm text-neutral-400 hover:text-black"
+              style={{ width: "100%", padding: "var(--space-2) 0", fontSize: "var(--text-sm)", fontFamily: "var(--font-sans)", background: "none", border: "none", color: "var(--color-fg-muted)", cursor: "pointer" }}
             >
               ← Back
             </button>

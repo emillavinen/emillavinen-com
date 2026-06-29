@@ -58,16 +58,16 @@ export default async function BlogPostPage({ params }: Props) {
       />
 
       <style>{`
-        .post-back:hover { opacity: 0.5; }
-        .post-back { transition: opacity var(--transition-base); }
+        .post-back { color: var(--color-fg-muted); transition: color var(--transition-base); text-decoration: none; }
+        .post-back:hover { color: var(--color-fg); }
       `}</style>
 
       <div
         style={{
           maxWidth: "1200px",
           margin: "0 auto",
-          padding: "var(--space-16) var(--space-8)",
-          paddingBottom: "calc(var(--space-16) + 44px)",
+          padding: "var(--space-32) var(--space-8)",
+          paddingBottom: "calc(var(--space-32) + 80px)",
           fontFamily: "var(--font-sans)",
         }}
       >
@@ -77,24 +77,24 @@ export default async function BlogPostPage({ params }: Props) {
               href="/blog"
               className="post-back"
               style={{
-                fontSize: "var(--text-xs)",
-                letterSpacing: "0.1em",
+                fontFamily: "var(--font-sans)",
+                fontSize: "var(--text-sm)",
+                letterSpacing: "var(--tracking-wide)",
                 textTransform: "uppercase",
-                color: "var(--color-muted)",
-                textDecoration: "none",
                 display: "inline-block",
-                marginBottom: "var(--space-6)",
+                marginBottom: "var(--space-12)",
               }}
             >
-              ← Writing
+              ← Blog
             </Link>
 
             <h1
               style={{
-                fontSize: "var(--text-3xl)",
-                fontWeight: 300,
-                letterSpacing: "-0.01em",
-                lineHeight: 1.2,
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(2rem, 5vw, 3rem)",
+                fontWeight: 400,
+                letterSpacing: "var(--tracking-tight)",
+                lineHeight: "var(--leading-snug)",
                 margin: "0 0 var(--space-4)",
                 color: "var(--color-fg)",
               }}
@@ -102,25 +102,27 @@ export default async function BlogPostPage({ params }: Props) {
               {post.title}
             </h1>
 
-            <div style={{ display: "flex", gap: "var(--space-4)", alignItems: "center" }}>
-              <time
-                style={{
-                  fontSize: "var(--text-xs)",
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  color: "var(--color-muted)",
-                }}
-              >
-                {post.date}
-              </time>
-              <span style={{ color: "var(--color-border)" }}>·</span>
-              <span style={{ fontSize: "var(--text-xs)", color: "var(--color-muted)" }}>
-                {formatReadingTime(post.readingTime)}
-              </span>
+            <div
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: "var(--text-sm)",
+                letterSpacing: "var(--tracking-wide)",
+                textTransform: "uppercase",
+                color: "var(--color-fg-muted)",
+                display: "flex",
+                gap: "var(--space-6)",
+                marginTop: "var(--space-4)",
+              }}
+            >
+              <time>{post.date}</time>
+              <span>{formatReadingTime(post.readingTime)}</span>
             </div>
           </header>
 
-          <div className="prose prose-neutral">
+          <div
+            className="prose prose-neutral"
+            style={{ marginTop: "var(--space-12)" }}
+          >
             <MDXRemote source={post.content} components={mdxComponents} />
           </div>
         </article>

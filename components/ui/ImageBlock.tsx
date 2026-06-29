@@ -31,7 +31,6 @@ export default function ImageBlock({
           width: "100%",
           height: "auto",
           display: "block",
-          borderRadius: "var(--radius-md)",
         }}
       />
       {caption && (
@@ -39,7 +38,7 @@ export default function ImageBlock({
           style={{
             marginTop: "var(--space-2)",
             fontSize: "var(--text-xs)",
-            color: "var(--color-muted)",
+            color: "var(--color-fg-muted)",
             fontFamily: "var(--font-sans)",
             letterSpacing: "0.02em",
           }}

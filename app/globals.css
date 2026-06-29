@@ -14,25 +14,95 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Accessible focus indicator for all interactive elements */
 :focus-visible {
   outline: 2px solid var(--color-fg);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
 }
 
-/* Prose tokens — changing colors in tokens.css updates prose too */
 .prose {
   --tw-prose-body:          var(--color-fg);
   --tw-prose-headings:      var(--color-fg);
   --tw-prose-links:         var(--color-fg);
   --tw-prose-bold:          var(--color-fg);
-  --tw-prose-counters:      var(--color-muted);
-  --tw-prose-bullets:       var(--color-muted);
-  --tw-prose-hr:            var(--color-border);
-  --tw-prose-quotes:        var(--color-fg);
-  --tw-prose-quote-borders: var(--color-border);
+  --tw-prose-counters:      var(--color-fg-muted);
+  --tw-prose-bullets:       var(--color-fg-muted);
+  --tw-prose-hr:            transparent;
+  --tw-prose-quotes:        var(--color-fg-secondary);
+  --tw-prose-quote-borders: var(--color-fg);
   --tw-prose-code:          var(--color-fg);
-  --tw-prose-pre-bg:        #f5f5f5;
+  --tw-prose-pre-bg:        #FFFFFF;
   max-width: 680px;
+}
+
+/* Blog post body text */
+.prose p {
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--color-fg);
+}
+
+/* Headings within prose */
+.prose h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-snug);
+  margin-top: var(--space-12);
+  margin-bottom: var(--space-6);
+  border-bottom: none;
+}
+
+.prose h3 {
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  font-weight: 400;
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
+}
+
+/* Blockquote — the ONE permitted decorative line on the site */
+.prose blockquote {
+  border-left: 2px solid var(--color-fg);
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  padding-left: var(--space-6);
+  margin-left: 0;
+  font-style: italic;
+  color: var(--color-fg-secondary);
+  background: none;
+  quotes: none;
+}
+
+.prose blockquote p::before,
+.prose blockquote p::after {
+  content: none;
+}
+
+/* Code blocks */
+.prose pre {
+  background: var(--color-bg);
+  border: 1px solid var(--color-fg-muted);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background: none;
+  color: var(--color-fg);
+}
+
+.prose pre code {
+  background: none;
+}
+
+/* No decorative horizontal rules */
+.prose hr {
+  border: none;
+  margin: var(--space-12) 0;
 }

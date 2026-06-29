@@ -203,7 +203,7 @@ export default function PostForm({ initialData, isNew = false }: PostFormProps) 
             {status === "error" && <span style={{ color: "#ef4444" }}>{errorMsg}</span>}
           </span>
           {form.published && status !== "saving" && (
-            <span style={{ fontSize: "var(--text-xs)", background: "#dcfce7", color: "#166534", padding: "2px 8px", borderRadius: "999px", fontFamily: "var(--font-sans)" }}>
+            <span style={{ fontSize: "var(--text-xs)", letterSpacing: "var(--tracking-wide)", textTransform: "uppercase", color: "var(--color-fg)", fontFamily: "var(--font-sans)" }}>
               Published
             </span>
           )}

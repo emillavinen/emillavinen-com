@@ -3,7 +3,6 @@ interface SpotifyEmbedProps {
 }
 
 function toEmbedUrl(url: string): string {
-  // Accepts spotify:artist:ID, spotify:track:ID, or https://open.spotify.com/...
   const uri = url.startsWith("spotify:")
     ? url.replace(/^spotify:/, "").replace(/:/g, "/")
     : url.replace("https://open.spotify.com/", "");
@@ -13,13 +12,7 @@ function toEmbedUrl(url: string): string {
 export default function SpotifyEmbed({ url }: SpotifyEmbedProps) {
   const embedUrl = toEmbedUrl(url);
   return (
-    <div
-      style={{
-        margin: "var(--space-8) 0",
-        borderRadius: "var(--radius-lg)",
-        overflow: "hidden",
-      }}
-    >
+    <div style={{ margin: "var(--space-8) 0" }}>
       <iframe
         src={embedUrl}
         width="100%"

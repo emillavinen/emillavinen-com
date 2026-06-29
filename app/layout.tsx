@@ -1,7 +1,22 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  weight: ["300", "400", "500"],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+  weight: ["300", "400", "500"],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -48,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased">
         {children}
         <Analytics />

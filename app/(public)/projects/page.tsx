@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Container from "@/components/Container";
 
 export const metadata: Metadata = {
   title: "Projects — Creative Direction & Brand Strategy Work",
@@ -17,46 +16,46 @@ export const metadata: Metadata = {
 };
 
 const projects = [
-  {
-    title: "Brand Identity",
-    client: "TBD",
-    year: "2025",
-    category: "Identity",
-  },
-  {
-    title: "Campaign Direction",
-    client: "TBD",
-    year: "2024",
-    category: "Art Direction",
-  },
-  {
-    title: "Editorial Design",
-    client: "TBD",
-    year: "2024",
-    category: "Print",
-  },
+  { title: "Brand Identity",    client: "TBD", year: "2025", category: "Identity" },
+  { title: "Campaign Direction", client: "TBD", year: "2024", category: "Art Direction" },
+  { title: "Editorial Design",  client: "TBD", year: "2024", category: "Print" },
 ];
 
 export default function ProjectsPage() {
   return (
-    <Container>
-      <h1 className="text-3xl font-light tracking-tight mb-12">
-        Selected Projects
-      </h1>
-      <ul className="divide-y divide-neutral-200">
+    <div
+      style={{
+        maxWidth: "1200px",
+        margin: "0 auto",
+        padding: "var(--space-32) var(--space-8)",
+        paddingBottom: "calc(var(--space-32) + 80px)",
+        fontFamily: "var(--font-sans)",
+      }}
+    >
+      <ul style={{ listStyle: "none", padding: 0, margin: 0, maxWidth: "800px" }}>
         {projects.map((project, i) => (
-          <li key={i} className="py-6 flex items-baseline justify-between gap-8">
+          <li
+            key={i}
+            style={{
+              padding: "var(--space-6) 0",
+              display: "flex",
+              alignItems: "baseline",
+              justifyContent: "space-between",
+              gap: "var(--space-8)",
+              marginBottom: "var(--space-4)",
+            }}
+          >
             <div>
-              <p className="text-sm text-neutral-400 mb-1">{project.client}</p>
-              <p className="text-lg font-light">{project.title}</p>
+              <p style={{ fontSize: "var(--text-xs)", letterSpacing: "var(--tracking-wide)", color: "var(--color-fg-muted)", margin: "0 0 var(--space-1)", textTransform: "uppercase" }}>{project.client}</p>
+              <p style={{ fontSize: "var(--text-xl)", fontWeight: 400, color: "var(--color-fg)", margin: 0 }}>{project.title}</p>
             </div>
-            <div className="flex gap-8 shrink-0 text-xs tracking-widest uppercase text-neutral-400">
+            <div style={{ display: "flex", gap: "var(--space-8)", flexShrink: 0, fontSize: "var(--text-xs)", letterSpacing: "var(--tracking-widest)", textTransform: "uppercase", color: "var(--color-fg-muted)" }}>
               <span>{project.category}</span>
               <span>{project.year}</span>
             </div>
           </li>
         ))}
       </ul>
-    </Container>
+    </div>
   );
 }

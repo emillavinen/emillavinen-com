@@ -13,80 +13,67 @@ export default function AboutPage() {
   return (
     <>
       <style>{`
-        .about-link:hover { opacity: 0.5; }
-        .about-link { transition: opacity var(--transition-base); }
+        .about-link { color: var(--color-fg); transition: color var(--transition-base); text-decoration: none; }
+        .about-link:hover { color: var(--color-fg-secondary); }
       `}</style>
 
       <div
         style={{
           maxWidth: "1200px",
           margin: "0 auto",
-          padding: "var(--space-16) var(--space-8)",
-          paddingBottom: "calc(var(--space-16) + 44px)",
+          padding: "var(--space-32) var(--space-8)",
+          paddingBottom: "calc(var(--space-32) + 80px)",
           fontFamily: "var(--font-sans)",
         }}
       >
         <div style={{ maxWidth: "680px" }}>
-          <h1
-            style={{
-              fontSize: "var(--text-3xl)",
-              fontWeight: 300,
-              letterSpacing: "-0.01em",
-              margin: "0 0 var(--space-12)",
-              color: "var(--color-fg)",
-            }}
-          >
-            About
-          </h1>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-5)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
             {[
               "Emil Lavinen is a Creative Director and Brand Strategist based in Helsinki. He works at the intersection of design, brand, and culture — shaping how ideas look, feel, and communicate.",
               "With a background spanning brand identity, art direction, and creative strategy, Emil collaborates with brands and organisations across Finland and Europe to build lasting visual languages and campaigns that connect.",
               "Available for selected projects and collaborations.",
             ].map((text) => (
-              <p key={text.slice(0, 20)} style={{ fontSize: "var(--text-base)", lineHeight: 1.75, color: "var(--color-muted)", margin: 0 }}>
+              <p key={text.slice(0, 20)} style={{ fontSize: "var(--text-lg)", lineHeight: "var(--leading-relaxed)", color: "var(--color-fg)", margin: 0 }}>
                 {text}
               </p>
             ))}
           </div>
 
-          <div
+          <dl
             style={{
-              marginTop: "var(--space-16)",
-              paddingTop: "var(--space-8)",
-              borderTop: "1px solid var(--color-border)",
+              marginTop: "var(--space-32)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "var(--space-4)",
             }}
           >
-            <dl style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
-              {[
-                { label: "Location", value: "Helsinki, Finland" },
-                { label: "Role", value: "Creative Director & Brand Strategist" },
-              ].map(({ label, value }) => (
-                <div key={label} style={{ display: "flex", gap: "var(--space-12)" }}>
-                  <dt style={{ fontSize: "var(--text-xs)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-muted)", width: "96px", flexShrink: 0 }}>
-                    {label}
-                  </dt>
-                  <dd style={{ fontSize: "var(--text-sm)", color: "var(--color-fg)", margin: 0 }}>{value}</dd>
-                </div>
-              ))}
-              <div style={{ display: "flex", gap: "var(--space-12)" }}>
-                <dt style={{ fontSize: "var(--text-xs)", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-muted)", width: "96px", flexShrink: 0 }}>
-                  Contact
+            {[
+              { label: "Location", value: "Helsinki, Finland" },
+              { label: "Role", value: "Creative Director & Brand Strategist" },
+            ].map(({ label, value }) => (
+              <div key={label} style={{ display: "flex", gap: "var(--space-12)" }}>
+                <dt style={{ fontSize: "var(--text-xs)", letterSpacing: "var(--tracking-widest)", textTransform: "uppercase", color: "var(--color-fg-muted)", width: "96px", flexShrink: 0 }}>
+                  {label}
                 </dt>
-                <dd style={{ margin: 0 }}>
-                  <a
-                    href={`mailto:${AUTHOR_EMAIL}`}
-                    rel="noopener noreferrer"
-                    className="about-link"
-                    style={{ fontSize: "var(--text-sm)", color: "var(--color-fg)", textDecoration: "none" }}
-                  >
-                    {AUTHOR_EMAIL}
-                  </a>
-                </dd>
+                <dd style={{ fontSize: "var(--text-sm)", color: "var(--color-fg)", margin: 0 }}>{value}</dd>
               </div>
-            </dl>
-          </div>
+            ))}
+            <div style={{ display: "flex", gap: "var(--space-12)" }}>
+              <dt style={{ fontSize: "var(--text-xs)", letterSpacing: "var(--tracking-widest)", textTransform: "uppercase", color: "var(--color-fg-muted)", width: "96px", flexShrink: 0 }}>
+                Contact
+              </dt>
+              <dd style={{ margin: 0 }}>
+                <a
+                  href={`mailto:${AUTHOR_EMAIL}`}
+                  rel="noopener noreferrer"
+                  className="about-link"
+                  style={{ fontSize: "var(--text-sm)" }}
+                >
+                  {AUTHOR_EMAIL}
+                </a>
+              </dd>
+            </div>
+          </dl>
         </div>
       </div>
     </>

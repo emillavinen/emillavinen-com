@@ -21,19 +21,19 @@ export default async function EditPostPage({ params }: Props) {
   const { data, content } = matter(file.content);
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-xl font-medium">Edit post</h1>
-        <div className="flex items-center gap-4">
+    <div style={{ maxWidth: "768px", margin: "0 auto", padding: "var(--space-12) var(--space-8)", fontFamily: "var(--font-sans)" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-8)" }}>
+        <h1 style={{ fontSize: "var(--text-sm)", fontWeight: 400, letterSpacing: "var(--tracking-widest)", textTransform: "uppercase", color: "var(--color-fg)", margin: 0 }}>Edit post</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-6)" }}>
           <a
             href={`/blog/${slug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-neutral-400 hover:text-black"
+            style={{ fontSize: "var(--text-sm)", color: "var(--color-fg-muted)", textDecoration: "none" }}
           >
             View ↗
           </a>
-          <Link href="/admin" className="text-sm text-neutral-400 hover:text-black">
+          <Link href="/admin" style={{ fontSize: "var(--text-sm)", color: "var(--color-fg-muted)", textDecoration: "none" }}>
             ← All posts
           </Link>
         </div>

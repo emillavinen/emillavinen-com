@@ -18,63 +18,50 @@ export default function ContactBar() {
         bottom: 0,
         left: 0,
         right: 0,
-        borderTop: "1px solid var(--color-border)",
+        minHeight: "40px",
         background: "var(--color-bg)",
         zIndex: 40,
         fontFamily: "var(--font-sans)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "var(--space-3) 0",
       }}
     >
       <style>{`
-        .contact-link { color: var(--color-muted); transition: color var(--transition-base); text-decoration: none; font-size: var(--text-xs); letter-spacing: 0.02em; min-height: 44px; display: inline-flex; align-items: center; }
+        .contact-link {
+          color: var(--color-fg-muted);
+          transition: color var(--transition-base);
+          text-decoration: none;
+          font-size: var(--text-xs);
+          letter-spacing: var(--tracking-widest);
+          text-transform: uppercase;
+          font-family: var(--font-sans);
+          font-weight: 400;
+        }
         .contact-link:hover { color: var(--color-fg); }
       `}</style>
 
       <div
         style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          padding: "var(--space-3) var(--space-8)",
           display: "flex",
           alignItems: "center",
           flexWrap: "wrap",
-          gap: "var(--space-1) 0",
+          justifyContent: "center",
+          gap: "var(--space-2) var(--space-6)",
+          padding: "0 var(--space-6)",
         }}
       >
-        <span
-          style={{
-            fontSize: "var(--text-xs)",
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: "var(--color-muted)",
-            marginRight: "var(--space-4)",
-          }}
-        >
-          Links
-        </span>
-
-        {LINKS.map(({ href, label }, i) => (
-          <span key={href} style={{ display: "inline-flex", alignItems: "center" }}>
-            {i > 0 && (
-              <span
-                aria-hidden
-                style={{
-                  display: "inline-block",
-                  width: "1px",
-                  height: "10px",
-                  background: "var(--color-border)",
-                  margin: "0 var(--space-4)",
-                }}
-              />
-            )}
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="contact-link"
-            >
-              {label}
-            </a>
-          </span>
+        {LINKS.map(({ href, label }) => (
+          <a
+            key={href}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="contact-link"
+          >
+            {label.toUpperCase()}
+          </a>
         ))}
       </div>
     </aside>
