@@ -7,26 +7,40 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: {
-    default: "Emil Lavinen — Creative Director",
+    default: "Emil Lavinen — Creative Director & Brand Strategist, Helsinki",
     template: "%s — Emil Lavinen",
   },
   description:
-    "Emil Lavinen is a Creative Director based in Helsinki, working at the intersection of design, brand, and culture.",
+    "Emil Lavinen is a Creative Director and Brand Strategist based in Helsinki, working at the intersection of design, brand, and culture.",
   metadataBase: new URL("https://emillavinen.com"),
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://emillavinen.com",
     siteName: "Emil Lavinen",
-    title: "Emil Lavinen — Creative Director",
+    title: "Emil Lavinen — Creative Director & Brand Strategist, Helsinki",
     description:
-      "Emil Lavinen is a Creative Director based in Helsinki, working at the intersection of design, brand, and culture.",
+      "Emil Lavinen is a Creative Director and Brand Strategist based in Helsinki, working at the intersection of design, brand, and culture.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Emil Lavinen — Creative Director & Brand Strategist, Helsinki",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Emil Lavinen — Creative Director",
+    title: "Emil Lavinen — Creative Director & Brand Strategist, Helsinki",
     description:
-      "Emil Lavinen is a Creative Director based in Helsinki, working at the intersection of design, brand, and culture.",
+      "Emil Lavinen is a Creative Director and Brand Strategist based in Helsinki, working at the intersection of design, brand, and culture.",
+    images: ["/opengraph-image"],
   },
 };
 

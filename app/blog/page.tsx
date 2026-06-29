@@ -4,12 +4,16 @@ import Container from "@/components/Container";
 import { getAllPosts } from "@/lib/mdx";
 
 export const metadata: Metadata = {
-  title: "Blog",
+  title: "Writing on Design, Brand Strategy & Creative Direction",
   description:
-    "Writing by Emil Lavinen — on design, creativity, and culture.",
+    "Essays and ideas by Emil Lavinen — a Helsinki-based Creative Director writing on brand strategy, creative direction, design, and culture.",
+  alternates: {
+    canonical: "https://emillavinen.com/blog",
+  },
   openGraph: {
-    title: "Blog — Emil Lavinen",
-    description: "Writing by Emil Lavinen — on design, creativity, and culture.",
+    title: "Writing — Emil Lavinen, Creative Director",
+    description:
+      "Essays and ideas by Emil Lavinen — on brand strategy, creative direction, design, and culture.",
     url: "https://emillavinen.com/blog",
   },
 };
@@ -19,7 +23,7 @@ export default function BlogPage() {
 
   return (
     <Container>
-      <h1 className="text-3xl font-light tracking-tight mb-12">Blog</h1>
+      <h1 className="text-3xl font-light tracking-tight mb-12">Writing</h1>
       {posts.length === 0 ? (
         <p className="text-neutral-400">No posts yet.</p>
       ) : (

@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import Container from "@/components/Container";
 
 export const metadata: Metadata = {
-  title: "Projects",
+  title: "Projects — Creative Direction & Brand Strategy Work",
   description:
-    "Selected projects by Emil Lavinen — Creative Director based in Helsinki.",
+    "Selected creative direction and brand strategy projects by Emil Lavinen — brand identities, campaigns, and visual systems for organisations across Finland and Europe.",
+  alternates: {
+    canonical: "https://emillavinen.com/projects",
+  },
   openGraph: {
-    title: "Projects — Emil Lavinen",
+    title: "Projects — Emil Lavinen, Creative Director",
     description:
-      "Selected projects by Emil Lavinen — Creative Director based in Helsinki.",
+      "Selected creative direction and brand strategy projects by Emil Lavinen — brand identities, campaigns, and visual systems for organisations across Finland and Europe.",
     url: "https://emillavinen.com/projects",
   },
 };
@@ -37,7 +40,9 @@ const projects = [
 export default function ProjectsPage() {
   return (
     <Container>
-      <h1 className="text-3xl font-light tracking-tight mb-12">Projects</h1>
+      <h1 className="text-3xl font-light tracking-tight mb-12">
+        Selected Projects
+      </h1>
       <ul className="divide-y divide-neutral-200">
         {projects.map((project, i) => (
           <li key={i} className="py-6 flex items-baseline justify-between gap-8">
