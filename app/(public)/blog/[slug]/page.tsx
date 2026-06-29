@@ -57,6 +57,11 @@ export default async function BlogPostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
 
+      <style>{`
+        .post-back:hover { opacity: 0.5; }
+        .post-back { transition: opacity var(--transition-base); }
+      `}</style>
+
       <div
         style={{
           maxWidth: "1200px",
@@ -70,6 +75,7 @@ export default async function BlogPostPage({ params }: Props) {
           <header style={{ marginBottom: "var(--space-12)" }}>
             <Link
               href="/blog"
+              className="post-back"
               style={{
                 fontSize: "var(--text-xs)",
                 letterSpacing: "0.1em",
@@ -78,10 +84,7 @@ export default async function BlogPostPage({ params }: Props) {
                 textDecoration: "none",
                 display: "inline-block",
                 marginBottom: "var(--space-6)",
-                transition: "opacity var(--transition-base)",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.5")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
               ← Writing
             </Link>
@@ -99,13 +102,7 @@ export default async function BlogPostPage({ params }: Props) {
               {post.title}
             </h1>
 
-            <div
-              style={{
-                display: "flex",
-                gap: "var(--space-4)",
-                alignItems: "center",
-              }}
-            >
+            <div style={{ display: "flex", gap: "var(--space-4)", alignItems: "center" }}>
               <time
                 style={{
                   fontSize: "var(--text-xs)",
@@ -117,12 +114,7 @@ export default async function BlogPostPage({ params }: Props) {
                 {post.date}
               </time>
               <span style={{ color: "var(--color-border)" }}>·</span>
-              <span
-                style={{
-                  fontSize: "var(--text-xs)",
-                  color: "var(--color-muted)",
-                }}
-              >
+              <span style={{ fontSize: "var(--text-xs)", color: "var(--color-muted)" }}>
                 {formatReadingTime(post.readingTime)}
               </span>
             </div>

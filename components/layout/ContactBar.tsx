@@ -24,6 +24,11 @@ export default function ContactBar() {
         fontFamily: "var(--font-sans)",
       }}
     >
+      <style>{`
+        .contact-link { color: var(--color-muted); transition: color var(--transition-base); text-decoration: none; font-size: var(--text-xs); letter-spacing: 0.02em; min-height: 44px; display: inline-flex; align-items: center; }
+        .contact-link:hover { color: var(--color-fg); }
+      `}</style>
+
       <div
         style={{
           maxWidth: "1200px",
@@ -32,7 +37,7 @@ export default function ContactBar() {
           display: "flex",
           alignItems: "center",
           flexWrap: "wrap",
-          gap: "var(--space-1) var(--space-6)",
+          gap: "var(--space-1) 0",
         }}
       >
         <span
@@ -41,14 +46,14 @@ export default function ContactBar() {
             letterSpacing: "0.1em",
             textTransform: "uppercase",
             color: "var(--color-muted)",
-            marginRight: "var(--space-2)",
+            marginRight: "var(--space-4)",
           }}
         >
           Links
         </span>
 
         {LINKS.map(({ href, label }, i) => (
-          <span key={href} style={{ display: "flex", alignItems: "center", gap: "var(--space-6)" }}>
+          <span key={href} style={{ display: "inline-flex", alignItems: "center" }}>
             {i > 0 && (
               <span
                 aria-hidden
@@ -57,6 +62,7 @@ export default function ContactBar() {
                   width: "1px",
                   height: "10px",
                   background: "var(--color-border)",
+                  margin: "0 var(--space-4)",
                 }}
               />
             )}
@@ -64,18 +70,7 @@ export default function ContactBar() {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                fontSize: "var(--text-xs)",
-                color: "var(--color-muted)",
-                textDecoration: "none",
-                letterSpacing: "0.02em",
-                transition: "color var(--transition-base)",
-                minHeight: "44px",
-                display: "inline-flex",
-                alignItems: "center",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-fg)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-muted)")}
+              className="contact-link"
             >
               {label}
             </a>
