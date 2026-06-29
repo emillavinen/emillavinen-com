@@ -45,6 +45,7 @@ export default async function EditPostPage({ params }: Props) {
           title: data.title ?? "",
           date: normalizeDate(data.date),
           description: data.description ?? "",
+          tags: Array.isArray(data.tags) ? data.tags.join(", ") : (data.tags ?? ""),
           content: content.trim(),
           published: data.published === true,
         }}

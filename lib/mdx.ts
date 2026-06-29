@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { readingTime } from "./reading-time";
 
 const BLOG_DIR = path.join(process.cwd(), "content/blog");
 
@@ -9,7 +10,9 @@ export interface PostMeta {
   title: string;
   date: string;
   description: string;
+  tags: string[];
   published: boolean;
+  readingTime: number;
 }
 
 export interface Post extends PostMeta {
@@ -19,6 +22,12 @@ export interface Post extends PostMeta {
 function normalizeDate(raw: unknown): string {
   if (raw instanceof Date) return raw.toISOString().split("T")[0];
   return String(raw ?? "");
+}
+
+function normalizeTags(raw: unknown): string[] {
+  if (Array.isArray(raw)) return raw.map(String);
+  if (typeof raw === "string") return raw.split(",").map((t) => t.trim()).filter(Boolean);
+  return [];
 }
 
 export function getPostSlugs(): string[] {
@@ -39,7 +48,9 @@ export function getPostBySlug(slug: string): Post {
     title: data.title ?? "",
     date: normalizeDate(data.date),
     description: data.description ?? "",
+    tags: normalizeTags(data.tags),
     published: data.published !== false,
+    readingTime: readingTime(content),
     content,
   };
 }

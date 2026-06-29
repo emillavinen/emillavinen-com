@@ -1,13 +1,24 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const TiptapEditor = dynamic(() => import("./editor/TiptapEditor"), {
+  ssr: false,
+  loading: () => (
+    <div style={{ border: "1px solid var(--color-border)", borderRadius: "var(--radius-md)", padding: "var(--space-6)", color: "var(--color-muted)", fontSize: "var(--text-sm)" }}>
+      Loading editor…
+    </div>
+  ),
+});
 
 export interface PostData {
   slug: string;
   title: string;
   date: string;
   description: string;
+  tags: string;
   content: string;
   published: boolean;
   sha?: string;
@@ -19,10 +30,7 @@ interface PostFormProps {
 }
 
 function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
 function today(): string {
@@ -30,12 +38,7 @@ function today(): string {
 }
 
 const EMPTY: PostData = {
-  slug: "",
-  title: "",
-  date: today(),
-  description: "",
-  content: "",
-  published: false,
+  slug: "", title: "", date: today(), description: "", tags: "", content: "", published: false,
 };
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
@@ -46,55 +49,49 @@ export default function PostForm({ initialData, isNew = false }: PostFormProps) 
   const [slugEdited, setSlugEdited] = useState(false);
   const [status, setStatus] = useState<SaveStatus>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const autoSaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Auto-generate slug from title for new posts until user edits it manually
   useEffect(() => {
     if (isNew && !slugEdited) {
       setForm((prev) => ({ ...prev, slug: slugify(prev.title) }));
     }
   }, [form.title, isNew, slugEdited]);
 
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
     if (name === "slug") setSlugEdited(true);
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
+  function handleContentChange(markdown: string) {
+    setForm((prev) => ({ ...prev, content: markdown }));
+    setStatus("idle");
+    if (autoSaveRef.current) clearTimeout(autoSaveRef.current);
+    if (!isNew) {
+      autoSaveRef.current = setTimeout(() => save(form.published, true), 60_000);
+    }
+  }
+
   const save = useCallback(
-    async (publish: boolean) => {
-      setStatus("saving");
+    async (publish: boolean, silent = false) => {
+      if (!silent) setStatus("saving");
       setErrorMsg("");
-
       try {
-        const body: PostData = { ...form, published: publish };
-        const url = isNew
-          ? "/api/admin/posts"
-          : `/api/admin/posts/${form.slug}`;
-        const method = isNew ? "POST" : "PUT";
-
+        const body = { ...form, published: publish };
+        const url = isNew ? "/api/admin/posts" : `/api/admin/posts/${form.slug}`;
         const res = await fetch(url, {
-          method,
+          method: isNew ? "POST" : "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
           throw new Error(data.error ?? `HTTP ${res.status}`);
         }
-
-        if (publish) {
-          await fetch("/api/admin/deploy", { method: "POST" });
-        }
-
+        if (publish) await fetch("/api/admin/deploy", { method: "POST" });
         setForm((prev) => ({ ...prev, published: publish }));
         setStatus("saved");
-
-        if (isNew) {
-          router.push(`/admin/posts/${form.slug}/edit`);
-        }
+        if (isNew) router.push(`/admin/posts/${form.slug}/edit`);
       } catch (err) {
         setStatus("error");
         setErrorMsg(err instanceof Error ? err.message : "Save failed");
@@ -106,9 +103,7 @@ export default function PostForm({ initialData, isNew = false }: PostFormProps) 
   async function handleDelete() {
     if (!confirm(`Delete "${form.title}"? This cannot be undone.`)) return;
     try {
-      const res = await fetch(`/api/admin/posts/${form.slug}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`/api/admin/posts/${form.slug}`, { method: "DELETE" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       router.push("/admin");
       router.refresh();
@@ -117,133 +112,120 @@ export default function PostForm({ initialData, isNew = false }: PostFormProps) 
     }
   }
 
+  const inputStyle = {
+    width: "100%",
+    border: "1px solid var(--color-border)",
+    borderRadius: "var(--radius-md)",
+    padding: "var(--space-2) var(--space-3)",
+    fontSize: "var(--text-sm)",
+    fontFamily: "var(--font-sans)",
+    color: "var(--color-fg)",
+    background: "var(--color-bg)",
+    outline: "none",
+    boxSizing: "border-box" as const,
+  };
+
+  const labelStyle = {
+    display: "block",
+    fontSize: "var(--text-xs)",
+    fontFamily: "var(--font-sans)",
+    fontWeight: 500,
+    letterSpacing: "0.1em",
+    textTransform: "uppercase" as const,
+    color: "var(--color-muted)",
+    marginBottom: "var(--space-2)",
+  };
+
   return (
-    <div className="space-y-6">
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
       {/* Title */}
       <div>
-        <label className="block text-xs font-medium text-neutral-500 uppercase tracking-widest mb-2">
-          Title
-        </label>
-        <input
-          type="text"
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          placeholder="Post title"
-          className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-black"
-        />
+        <label style={labelStyle}>Title</label>
+        <input type="text" name="title" value={form.title} onChange={handleChange} placeholder="Post title" style={{ ...inputStyle, fontSize: "var(--text-base)" }} />
       </div>
 
       {/* Slug */}
       <div>
-        <label className="block text-xs font-medium text-neutral-500 uppercase tracking-widest mb-2">
-          Slug
-        </label>
+        <label style={labelStyle}>Slug</label>
         <input
-          type="text"
-          name="slug"
-          value={form.slug}
-          onChange={handleChange}
-          disabled={!isNew}
-          placeholder="post-slug"
-          className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-black disabled:bg-neutral-50 disabled:text-neutral-400 disabled:cursor-not-allowed"
+          type="text" name="slug" value={form.slug} onChange={handleChange}
+          disabled={!isNew} placeholder="post-slug" style={{ ...inputStyle, opacity: isNew ? 1 : 0.5 }}
         />
-        <p className="text-xs text-neutral-400 mt-1">
+        <p style={{ fontSize: "var(--text-xs)", color: "var(--color-muted)", marginTop: "var(--space-1)", fontFamily: "var(--font-sans)" }}>
           emillavinen.com/blog/{form.slug || "…"}
         </p>
       </div>
 
-      {/* Date */}
-      <div>
-        <label className="block text-xs font-medium text-neutral-500 uppercase tracking-widest mb-2">
-          Publish Date
-        </label>
-        <input
-          type="date"
-          name="date"
-          value={form.date}
-          onChange={handleChange}
-          className="border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-black"
-        />
+      {/* Date + Tags row */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+        <div>
+          <label style={labelStyle}>Publish Date</label>
+          <input type="date" name="date" value={form.date} onChange={handleChange} style={inputStyle} />
+        </div>
+        <div>
+          <label style={labelStyle}>Tags</label>
+          <input type="text" name="tags" value={form.tags} onChange={handleChange} placeholder="design, brand, strategy" style={inputStyle} />
+        </div>
       </div>
 
       {/* Meta description */}
       <div>
-        <label className="block text-xs font-medium text-neutral-500 uppercase tracking-widest mb-2">
+        <label style={labelStyle}>
           Meta Description{" "}
-          <span
-            className={`normal-case font-normal ${
-              form.description.length > 160 ? "text-red-500" : "text-neutral-400"
-            }`}
-          >
+          <span style={{ fontWeight: 400, textTransform: "none", color: form.description.length > 160 ? "#ef4444" : "var(--color-muted)" }}>
             ({form.description.length}/160)
           </span>
         </label>
         <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          rows={2}
-          placeholder="Brief description for search engines…"
-          className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-black resize-none"
+          name="description" value={form.description} onChange={handleChange}
+          rows={2} placeholder="Brief description for search engines…"
+          style={{ ...inputStyle, resize: "none" }}
         />
       </div>
 
-      {/* Content */}
+      {/* Rich text editor */}
       <div>
-        <label className="block text-xs font-medium text-neutral-500 uppercase tracking-widest mb-2">
-          Content (Markdown)
-        </label>
-        <textarea
-          name="content"
-          value={form.content}
-          onChange={handleChange}
-          rows={24}
-          placeholder="Write in markdown…"
-          className="w-full border border-neutral-300 rounded px-3 py-2 text-sm font-mono leading-relaxed focus:outline-none focus:border-black resize-y"
-        />
+        <label style={labelStyle}>Content</label>
+        <TiptapEditor initialContent={form.content} onChange={handleContentChange} />
       </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-4 border-t border-neutral-200">
-        <div className="flex items-center gap-4">
-          {/* Status */}
-          <span className="text-sm text-neutral-400">
+      <div
+        style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          paddingTop: "var(--space-4)", borderTop: "1px solid var(--color-border)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
+          <span style={{ fontSize: "var(--text-sm)", fontFamily: "var(--font-sans)", color: "var(--color-muted)" }}>
             {status === "saving" && "Saving…"}
-            {status === "saved" && (
-              <span className="text-green-600">Saved</span>
-            )}
-            {status === "error" && (
-              <span className="text-red-500">{errorMsg}</span>
-            )}
+            {status === "saved" && <span style={{ color: "#16a34a" }}>Saved ✓</span>}
+            {status === "error" && <span style={{ color: "#ef4444" }}>{errorMsg}</span>}
           </span>
           {form.published && status !== "saving" && (
-            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+            <span style={{ fontSize: "var(--text-xs)", background: "#dcfce7", color: "#166534", padding: "2px 8px", borderRadius: "999px", fontFamily: "var(--font-sans)" }}>
               Published
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
           {!isNew && (
-            <button
-              onClick={handleDelete}
-              className="px-4 py-2 text-sm text-red-500 hover:text-red-700 transition-colors"
-            >
+            <button onClick={handleDelete} style={{ padding: "var(--space-2) var(--space-4)", fontSize: "var(--text-sm)", fontFamily: "var(--font-sans)", background: "none", border: "none", color: "#ef4444", cursor: "pointer" }}>
               Delete
             </button>
           )}
           <button
             onClick={() => save(false)}
             disabled={status === "saving"}
-            className="px-4 py-2 text-sm border border-neutral-300 rounded bg-white hover:bg-neutral-50 disabled:opacity-50"
+            style={{ padding: "var(--space-2) var(--space-4)", fontSize: "var(--text-sm)", fontFamily: "var(--font-sans)", border: "1px solid var(--color-border)", borderRadius: "var(--radius-md)", background: "var(--color-bg)", cursor: "pointer", opacity: status === "saving" ? 0.5 : 1 }}
           >
             Save draft
           </button>
           <button
             onClick={() => save(true)}
             disabled={status === "saving"}
-            className="px-4 py-2 text-sm bg-black text-white rounded hover:bg-neutral-800 disabled:opacity-50"
+            style={{ padding: "var(--space-2) var(--space-4)", fontSize: "var(--text-sm)", fontFamily: "var(--font-sans)", borderRadius: "var(--radius-md)", background: "var(--color-fg)", color: "var(--color-bg)", border: "none", cursor: "pointer", opacity: status === "saving" ? 0.5 : 1 }}
           >
             {form.published ? "Update & deploy" : "Publish & deploy"}
           </button>

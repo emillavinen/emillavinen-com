@@ -1,32 +1,38 @@
+@import "../styles/tokens.css";
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-:root {
-  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-@theme inline {
-  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: #ffffff;
-  color: #111111;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Accessible focus indicator for all interactive elements */
+:focus-visible {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Prose tokens — changing colors in tokens.css updates prose too */
 .prose {
-  --tw-prose-body: #333333;
-  --tw-prose-headings: #111111;
-  --tw-prose-links: #111111;
-  --tw-prose-bold: #111111;
-  --tw-prose-counters: #666666;
-  --tw-prose-bullets: #666666;
-  --tw-prose-hr: #e5e5e5;
-  --tw-prose-quotes: #333333;
-  --tw-prose-quote-borders: #e5e5e5;
-  --tw-prose-code: #111111;
-  --tw-prose-pre-bg: #f5f5f5;
+  --tw-prose-body:          var(--color-fg);
+  --tw-prose-headings:      var(--color-fg);
+  --tw-prose-links:         var(--color-fg);
+  --tw-prose-bold:          var(--color-fg);
+  --tw-prose-counters:      var(--color-muted);
+  --tw-prose-bullets:       var(--color-muted);
+  --tw-prose-hr:            var(--color-border);
+  --tw-prose-quotes:        var(--color-fg);
+  --tw-prose-quote-borders: var(--color-border);
+  --tw-prose-code:          var(--color-fg);
+  --tw-prose-pre-bg:        #f5f5f5;
+  max-width: 680px;
 }

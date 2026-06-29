@@ -1,0 +1,114 @@
+---
+title: "On Visual Identity: Why Most Brands Get It Wrong From the Start"
+date: "2025-06-15"
+description: "Most brands fail at visual identity before they even begin. The problem isn't execution — it's the order of operations."
+tags: [brand strategy, visual identity, design systems]
+published: true
+---
+
+There is a predictable pattern to how most organisations approach visual identity. They hire a designer, or a studio, or an agency. They get a logo. Maybe some colours. A typeface if they're lucky. Then they go live and wonder why nothing feels coherent six months later.
+
+The problem is not the output. The problem is the order of operations.
+
+Visual identity is the expression of something that has to exist first — a point of view, a position, a set of decisions about who you are and who you're for. When you skip that part and go straight to the logo, you're not building an identity. You're building decoration.
+
+## The System vs. The Symbol
+
+Most people think of visual identity as a logo. This is understandable — the logo is the most visible artifact — but it's a category error. The logo is one element in a system. It's the name badge at the party, not the person wearing it.
+
+A visual identity is a *system*. It has rules. It has a logic. It has relationships between elements — type, colour, space, image — that create a consistent experience across every surface where a brand appears. The logo is the anchor of that system. It is not the system itself.
+
+### What a system actually contains
+
+A real brand identity system includes:
+
+- **A typographic hierarchy** — which typefaces, at which sizes, in which combinations, for which purposes
+- **A colour logic** — not just hex codes, but when to use which colour and why
+- **A spatial rhythm** — how elements are spaced, how much breathing room they get, what counts as crowded
+- **An image direction** — what photography or illustration looks like, what it doesn't look like, what subjects it addresses
+- **A voice** — how the brand writes, even if that feels like a copywriting concern
+
+All of these have to cohere. When they cohere, identity is legible. When they don't, it feels off in ways that are hard to name but easy to feel.
+
+## The Strategy Problem
+
+Here is a design token definition — a small piece of the systematic thinking I'm describing:
+
+```css
+:root {
+  --color-bg:     #ffffff;
+  --color-fg:     #111111;
+  --color-muted:  #737373;
+  --color-accent: #111111;
+  --font-sans:    "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --space-8:      2rem;
+}
+```
+
+This is seven lines of code. But notice what it represents: a complete set of decisions about a brand's visual world. Background. Foreground. Secondary. Accent. Type. Space. Every component on the site consumes *only* these tokens — never raw values.
+
+Change `--color-accent` to a different colour, and it propagates everywhere. That is what a system does. It encodes decisions so they can be applied consistently and changed centrally.
+
+Strategy is the same thing, one level up. It encodes what a brand believes so that every decision — what to say, what to make, who to target, what to decline — can be made with consistency.
+
+Without strategy, every new design decision starts from scratch. With it, most decisions are already made.
+
+<Callout>
+The most useful thing strategy does is not tell you what to do. It tells you what not to do. When a brief comes in that doesn't fit, strategy gives you the language to say no — or to understand why you should say yes even when it's uncomfortable.
+</Callout>
+
+## Why Music Gets This Right
+
+I spend a lot of time thinking about music and brand. Artists and labels have always understood, at least intuitively, something that corporate brand strategy often misses: identity is a *position*, not a description.
+
+When you listen to a record, you don't need a mission statement to know what the artist is about. The music tells you. The artwork tells you. The way they show up in interviews, the venues they play, the collaborators they choose — all of it cohere into a clear sense of who this is and what they stand for.
+
+That's not an accident. It's curation. It's discipline. It's a refusal to be everything to everyone.
+
+The most interesting brand work I do draws on this instinct: what would this organisation sound like if it were a record? Who would it collaborate with? What would it say no to?
+
+<SpotifyEmbed url="spotify:artist:0O5wpsxmlBm0vNnCcDX4PT" />
+
+Those questions might sound abstract, but they produce concrete answers. They push past the generic language that most brand work settles into. They find something specific.
+
+## The Three Mistakes
+
+I've watched organisations at different scales make the same mistakes in this order:
+
+1. **Starting with output instead of position.** They brief the designer before they've answered the hard questions. What results is a logo that could belong to anyone.
+
+2. **Treating identity as a launch event.** They do the rebrand, launch it with some fanfare, and then go back to operating exactly as before. Identity is not a campaign. It's an ongoing practice.
+
+3. **Confusing consistency with repetition.** True consistency is not using the same logo in the same position on every page. It's maintaining a coherent point of view across different contexts — some of which will require different executions of the same idea.
+
+### On the third mistake specifically
+
+This is the hardest one to get right, and the one I think about most.
+
+A brand that appears on a billboard, a packaging label, a social feed, a customer email, and an annual report is appearing in five radically different contexts. The execution has to be different. The underlying logic cannot be.
+
+The way you know you've got this right is that someone who encounters the brand across all five contexts would recognise it as the same entity — not because they saw the same logo five times, but because the *thinking* behind it feels continuous.
+
+That is what good brand systems do. They give designers the vocabulary to make different decisions that still feel like the same voice.
+
+---
+
+## Where to Start
+
+If you're building or rebuilding a brand identity, here is the sequence that works:
+
+1. **Answer the hard questions first.** Who is this for? What do we believe that others in our category don't? What are we willing to give up to be specific?
+
+2. **Write it down before you visualise it.** A positioning document, a set of brand principles, a vocabulary of words that are *us* and words that are *not us* — these give the visual work somewhere to come from.
+
+3. **Build the system before the individual assets.** Design the tokens. Agree on the logic. Then build the components.
+
+4. **Pressure-test it on real surfaces.** A brand identity that only works on a white slide deck will fail in the world. Put it on a bus shelter, a small phone screen, a black-and-white photocopy. See what holds.
+
+5. **Write the rules down.** Not as a document no one will read, but as living guidelines — specific enough to be useful, flexible enough to survive reality.
+
+---
+
+Most brands don't fail because of bad design. They fail because the design wasn't given anything real to work with.
+
+Start with the position. Build the system. Then make the logo.
