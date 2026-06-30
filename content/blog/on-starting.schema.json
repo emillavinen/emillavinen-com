@@ -1,0 +1,24 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "\"How to Start Your Creative Project: Overcoming the Blank Page\"",
+  "description": "Discover how to overcome the fear of starting your creative projects. Learn why the first move is crucial and how to embrace imperfection in your journey.",
+  "author": {
+    "@type": "Person",
+    "name": "Emil Lavinen",
+    "url": "https://emillavinen.com"
+  },
+  "datePublished": "2025-06-29",
+  "dateModified": "2025-06-29",
+  "keywords": "creative-strategy, starting-a-creative-project, brand-strategist-tips, creative-director-advice, design-first-move, overcoming-creative-blocks, embracing-imperfection-in-design",
+  "wordCount": 208,
+  "timeRequired": "PT1M",
+  "publisher": {
+    "@type": "Person",
+    "name": "Emil Lavinen"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://emillavinen.com/blog/on-starting"
+  }
+}

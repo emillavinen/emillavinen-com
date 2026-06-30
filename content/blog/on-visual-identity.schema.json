@@ -1,0 +1,24 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "\"Visual Identity: Why Brands Fail to Build It Right From the Start\"",
+  "description": "Discover why most brands fail at visual identity from the start. Learn the importance of strategy and coherence in creating a lasting brand presence.",
+  "author": {
+    "@type": "Person",
+    "name": "Emil Lavinen",
+    "url": "https://emillavinen.com"
+  },
+  "datePublished": "2025-06-15",
+  "dateModified": "2025-06-15",
+  "keywords": "brand strategy, visual identity, design systems, branding, visual-identity-system, creative-director-services, brand-strategy-development, design-consistency, typographic-hierarchy, colour-logic, spatial-rhythm",
+  "wordCount": 1183,
+  "timeRequired": "PT5M",
+  "publisher": {
+    "@type": "Person",
+    "name": "Emil Lavinen"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://emillavinen.com/blog/on-visual-identity"
+  }
+}

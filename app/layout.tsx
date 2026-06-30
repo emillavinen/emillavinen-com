@@ -64,6 +64,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} h-full`}>
+      <head>
+        <link rel="icon" type="image/x-icon" href="/icons/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="alternate" type="application/rss+xml" title="Emil Lavinen" href="/feed.xml" />
+        <meta name="theme-color" content="#0A0A0A" />
+        <meta name="msapplication-TileColor" content="#0A0A0A" />
+        <meta name="msapplication-TileImage" content="/icons/mstile-150x150.png" />
+      </head>
       <body className="min-h-full flex flex-col antialiased">
         {children}
         <Analytics />

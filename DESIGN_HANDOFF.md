@@ -219,3 +219,23 @@ GITHUB_REPO=             # Repository name (emillavinen-com)
 GITHUB_BRANCH=main       # Branch to write posts to
 VERCEL_DEPLOY_HOOK_URL=  # Vercel deploy hook for publish button
 ```
+
+
+---
+
+## REPLACING ICONS
+
+Place a new source concept in `/scripts/generate-icons.ts` (the `elSVG` and `ogDefaultSVG` functions) and run:
+
+```bash
+pnpm generate-icons
+```
+
+All icons, the web manifest, and the OG fallback image will regenerate automatically. No other code changes needed.
+
+Icon files live in `/public/icons/`. The web manifest is at `/public/site.webmanifest`.
+
+For true PNG output (recommended for production), pipe through `sharp`:
+```bash
+npx sharp-cli -i public/icons/android-chrome-192x192.svg -o public/icons/android-chrome-192x192.png resize 192 192
+```

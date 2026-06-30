@@ -9,13 +9,31 @@ import SpotifyEmbed from "@/components/ui/SpotifyEmbed";
 import VideoEmbed from "@/components/ui/VideoEmbed";
 import Callout from "@/components/ui/Callout";
 import ImageBlock from "@/components/ui/ImageBlock";
-import { SITE_NAME } from "@/lib/constants";
+import { SITE_NAME, SITE_URL } from "@/lib/constants";
+import BlogPostClient from "@/components/BlogPostClient";
+import { extractToc } from "@/lib/toc";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-const mdxComponents = { SpotifyEmbed, VideoEmbed, Callout, ImageBlock };
+function makeHeading(level: 2 | 3 | 4 | 5 | 6) {
+  const Tag = `h${level}` as "h2" | "h3" | "h4" | "h5" | "h6";
+  return function HeadingWithId({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+    const text = typeof children === "string" ? children : "";
+    const slug = text.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-");
+    return <Tag id={slug} {...props}>{children}</Tag>;
+  };
+}
+
+const mdxComponents = {
+  SpotifyEmbed,
+  VideoEmbed,
+  Callout,
+  ImageBlock,
+  h2: makeHeading(2),
+  h3: makeHeading(3),
+};
 
 export async function generateStaticParams() {
   return getPostSlugs().map((slug) => ({ slug }));
@@ -26,13 +44,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!getPostSlugs().includes(slug)) return {};
 
   const post = getPostBySlug(slug);
-  return buildMetadata({
+  const tagsParam = post.tags.length > 0 ? `&tags=${encodeURIComponent(post.tags.join(","))}` : "";
+  const ogImageUrl = `${SITE_URL}/api/og?title=${encodeURIComponent(post.title)}${tagsParam}`;
+
+  const base = buildMetadata({
     title: post.title,
     description: post.description,
     path: `/blog/${slug}`,
     type: "article",
     publishedTime: post.date,
   });
+
+  return {
+    ...base,
+    openGraph: {
+      ...base.openGraph,
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: post.title }],
+    },
+    twitter: {
+      ...base.twitter,
+      images: [ogImageUrl],
+    },
+  };
 }
 
 export default async function BlogPostPage({ params }: Props) {
@@ -40,6 +73,8 @@ export default async function BlogPostPage({ params }: Props) {
   if (!getPostSlugs().includes(slug)) notFound();
 
   const post = getPostBySlug(slug);
+  const toc = extractToc(post.content);
+  const wordCount = post.content.trim().split(/\s+/).filter(Boolean).length;
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -71,7 +106,7 @@ export default async function BlogPostPage({ params }: Props) {
           fontFamily: "var(--font-sans)",
         }}
       >
-        <article style={{ maxWidth: "680px" }}>
+        <BlogPostClient toc={toc} wordCount={wordCount}>
           <header style={{ marginBottom: "var(--space-12)" }}>
             <Link
               href="/blog"
@@ -125,7 +160,7 @@ export default async function BlogPostPage({ params }: Props) {
           >
             <MDXRemote source={post.content} components={mdxComponents} />
           </div>
-        </article>
+        </BlogPostClient>
       </div>
     </>
   );

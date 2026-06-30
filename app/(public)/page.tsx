@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION, SOCIAL_ALL_URLS, AUTHOR_EMAIL } from "@/lib/constants";
 import { buildMetadata } from "@/lib/seo";
+import Testimonials from "@/components/Testimonials";
 
 export const metadata: Metadata = buildMetadata();
 
@@ -136,6 +137,10 @@ export default function HomePage() {
           architecture for organisations navigating change. Music culture
           runs through a lot of it. Helsinki is home.
         </p>
+
+        <div style={{ maxWidth: "680px", marginTop: "var(--space-24)" }}>
+          <Testimonials />
+        </div>
       </section>
     </>
   );
