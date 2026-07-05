@@ -39,21 +39,6 @@ export default function Nav() {
         >
           emil lavinen
         </Link>
-
-        <Link
-          href="/blog"
-          style={{
-            fontFamily: "var(--font-sans)",
-            fontSize: "var(--text-sm)",
-            fontWeight: 400,
-            letterSpacing: "var(--tracking-widest)",
-            textDecoration: "none",
-            color: "var(--color-fg-secondary)",
-          }}
-          className="nav-wordmark"
-        >
-          blog
-        </Link>
       </nav>
 
       <style>{`

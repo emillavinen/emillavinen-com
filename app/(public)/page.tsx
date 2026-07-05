@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION, SOCIAL_ALL_URLS, AUTHOR_EMAIL } from "@/lib/constants";
 import { buildMetadata } from "@/lib/seo";
-import Testimonials from "@/components/Testimonials";
 
 export const metadata: Metadata = buildMetadata();
 
@@ -26,11 +25,6 @@ const websiteSchema = {
   "@type": "WebSite",
   name: SITE_NAME,
   url: SITE_URL,
-  potentialAction: {
-    "@type": "SearchAction",
-    target: `${SITE_URL}/blog?q={search_term_string}`,
-    "query-input": "required name=search_term_string",
-  },
 };
 
 export default function HomePage() {
@@ -45,88 +39,86 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
 
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section
+      <div
         style={{
-          minHeight: "60svh",
-          display: "flex",
-          alignItems: "flex-end",
+          maxWidth: "1200px",
+          margin: "0 auto",
           padding: "var(--space-32) var(--space-8)",
-          maxWidth: "1200px",
-          margin: "0 auto",
-          boxSizing: "border-box",
+          fontFamily: "var(--font-sans)",
         }}
       >
-        <div>
-          <p
+        <div style={{ maxWidth: "680px" }}>
+          <h1
             style={{
-              fontFamily: "var(--font-sans)",
-              fontSize: "var(--text-sm)",
-              fontWeight: 400,
+              fontSize: "var(--text-2xl)",
+              fontWeight: 700,
               letterSpacing: "var(--tracking-widest)",
-              color: "var(--color-fg-secondary)",
-              margin: 0,
+              color: "var(--color-fg)",
+              margin: "0 0 var(--space-24)",
             }}
           >
-            creative director &amp; brand strategist — helsinki
+            I design; analyze; direct
+          </h1>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
+            {[
+              "At 16, I realized my future belonged in the creative field. Leaving my dream to become a pilot behind, the next four years I spent in a home studio, learning music production and the business around it. By 17 I got my first clients. By 19, customers were coming back on their own.",
+              "Those years revealed a pattern I kept running into: people who excelled at making wonderful things often approached the work differently from those who knew how to bring things into the world. I became interested in turning good work into work that gets seen.",
+            ].map((text) => (
+              <p key={text.slice(0, 20)} style={{ fontSize: "var(--text-lg)", lineHeight: "var(--leading-relaxed)", color: "var(--color-fg)", margin: 0 }}>
+                {text}
+              </p>
+            ))}
+          </div>
+
+          <h2
+            style={{
+              fontSize: "var(--text-xl)",
+              fontWeight: 700,
+              letterSpacing: "var(--tracking-widest)",
+              color: "var(--color-fg)",
+              margin: "var(--space-32) 0 var(--space-6)",
+            }}
+          >
+            The direction
+          </h2>
+
+          <p style={{ fontSize: "var(--text-lg)", lineHeight: "var(--leading-relaxed)", color: "var(--color-fg)", margin: 0 }}>
+            Between 18 and 20, as part of a niche indie label, a handful of us built one of the largest annual gatherings for Helsinki&rsquo;s Russian-speaking audience. I was there as an artist and a graphic designer. Every year we organized festivals for 150+ people, with artists from abroad.
+          </p>
+          <p style={{ fontSize: "var(--text-lg)", lineHeight: "var(--leading-relaxed)", color: "var(--color-fg)", margin: "var(--space-6) 0 0" }}>
+            We also barely broke even. The whole thing ran on money borrowed from friends, year after year, despite the demand being real and the work being good. That much creative energy in one place is part of why we pulled it off at all, and it&rsquo;s still one of the best experiences I&rsquo;ve had. It&rsquo;s also what made the gap impossible to ignore: creative businesses compete on the same ground as everyone else. There&rsquo;s no sustained creativity without the business side.
+          </p>
+
+          <h2
+            style={{
+              fontSize: "var(--text-xl)",
+              fontWeight: 700,
+              letterSpacing: "var(--tracking-widest)",
+              color: "var(--color-fg)",
+              margin: "var(--space-32) 0 var(--space-6)",
+            }}
+          >
+            The work
+          </h2>
+
+          <p style={{ fontSize: "var(--text-lg)", lineHeight: "var(--leading-relaxed)", color: "var(--color-fg)", margin: 0 }}>
+            I currently work at a Finnish product and design atelier. I came in as an intern myself, part of a team like any other. Fast forward and I am teaching and directing just arriving interns, and I think I&rsquo;ve gotten a taste for it.
           </p>
 
           <p
             style={{
-              fontFamily: "var(--font-sans)",
-              fontSize: "var(--text-base)",
+              fontSize: "var(--text-lg)",
               lineHeight: "var(--leading-relaxed)",
-              color: "var(--color-fg-secondary)",
-              maxWidth: "520px",
-              margin: "var(--space-12) 0 0",
+              fontWeight: 700,
+              color: "var(--color-fg)",
+              margin: "var(--space-32) 0 0",
             }}
           >
-            I work at the intersection of visual identity and brand strategy —
-            building the creative systems that give organisations a clear,
-            coherent presence. Based in Helsinki, I lead art direction and
-            brand work for clients across Finland and Europe, with a particular
-            interest in music culture and the brands that shape it.
+            There is one project I haven&rsquo;t made yet. Contact me.
           </p>
         </div>
-      </section>
-
-      {/* ── About ────────────────────────────────────────────────────────── */}
-      <section
-        id="about"
-        style={{
-          paddingTop: "var(--space-40)",
-          paddingBottom: "var(--space-32)",
-          paddingLeft: "var(--space-8)",
-          paddingRight: "var(--space-8)",
-          maxWidth: "1200px",
-          margin: "0 auto",
-          boxSizing: "border-box",
-        }}
-      >
-        <p
-          style={{
-            fontFamily: "var(--font-sans)",
-            fontSize: "var(--text-lg)",
-            lineHeight: "var(--leading-relaxed)",
-            color: "var(--color-fg)",
-            maxWidth: "600px",
-            margin: 0,
-          }}
-        >
-          I&rsquo;ve spent the better part of a decade helping organisations
-          figure out who they are and how to show it. That work lives at
-          the overlap of strategy and craft — defining what a brand stands
-          for, then building the visual language that makes it legible.
-          I&rsquo;m drawn to projects where the brief is hard and the
-          stakes are real: identity systems, campaign direction, brand
-          architecture for organisations navigating change. Music culture
-          runs through a lot of it. Helsinki is home.
-        </p>
-
-        <div style={{ maxWidth: "680px", marginTop: "var(--space-24)" }}>
-          <Testimonials />
-        </div>
-      </section>
+      </div>
     </>
   );
 }
