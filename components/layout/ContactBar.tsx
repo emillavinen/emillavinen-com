@@ -6,6 +6,7 @@ const LINKS = [
   { href: SOCIAL_LINKS.linkedin,  label: "linkedin" },
   { href: SOCIAL_LINKS.spotify,   label: "spotify" },
   { href: SOCIAL_LINKS.behance,   label: "behance" },
+  { href: SOCIAL_LINKS.pinterest, label: "pinterest" },
 ];
 
 export default function ContactBar() {
