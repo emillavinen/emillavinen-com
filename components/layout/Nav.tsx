@@ -32,8 +32,8 @@ export default function Nav() {
             fontSize: "var(--text-sm)",
             fontWeight: 400,
             letterSpacing: "var(--tracking-widest)",
-            textDecoration: "none",
-            color: "var(--color-fg-secondary)",
+            textDecoration: "underline",
+            color: "var(--color-link-secondary)",
           }}
           className="nav-wordmark"
         >

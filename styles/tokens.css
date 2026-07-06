@@ -32,12 +32,24 @@
 
   /* ── Colors ─────────────────────────────────────────────────────────────── */
   --color-bg:           #FFFFFF;
-  --color-fg:           #0A0A0A;
-  --color-fg-secondary: #6B6B6B;
+  --color-bg-secondary: #F9F9F9; /* reserved for a future background-text use case — not wired to any element yet */
+  --color-fg:           #111111; /* titles / headings */
+  --color-fg-secondary: #333333; /* paragraph / body text */
   --color-fg-muted:     #ADADAD;
   --color-border:       transparent;
   --color-accent:       #0A0A0A;
   --color-muted:        #6B6B6B; /* retained alias — used by admin/TipTap editor */
+
+  /* ── Links ──────────────────────────────────────────────────────────────────
+   * Two link styles, both underlined:
+   *   Link 1 (--color-link)           — red, reserved for standout links. As of
+   *                                      2026-07-06 it's used only for "Contact me".
+   *   Link 2 (--color-link-secondary) — same color as paragraph text, the default.
+   * Every link on the site defaults to Link 2 unless told otherwise — ask the user
+   * next session how remaining/new links should be assigned before adding more
+   * Link 1 instances. */
+  --color-link:           #BF0C0C;
+  --color-link-secondary: var(--color-fg-secondary);
 
   /* ── Spacing ────────────────────────────────────────────────────────────── */
   --space-1:  0.25rem;   /*   4px */

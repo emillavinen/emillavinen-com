@@ -20,9 +20,9 @@ export default function ContactBar() {
     >
       <style>{`
         .contact-link {
-          color: var(--color-fg-muted);
+          color: var(--color-link-secondary);
           transition: color var(--transition-base);
-          text-decoration: none;
+          text-decoration: underline;
           font-size: var(--text-xs);
           letter-spacing: var(--tracking-widest);
           font-family: var(--font-sans);

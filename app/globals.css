@@ -21,9 +21,9 @@ body {
 }
 
 .prose {
-  --tw-prose-body:          var(--color-fg);
+  --tw-prose-body:          var(--color-fg-secondary);
   --tw-prose-headings:      var(--color-fg);
-  --tw-prose-links:         var(--color-fg);
+  --tw-prose-links:         var(--color-link-secondary);
   --tw-prose-bold:          var(--color-fg);
   --tw-prose-counters:      var(--color-fg-muted);
   --tw-prose-bullets:       var(--color-fg-muted);
@@ -39,7 +39,12 @@ body {
 .prose p {
   font-size: var(--text-lg);
   line-height: var(--leading-relaxed);
-  color: var(--color-fg);
+  color: var(--color-fg-secondary);
+}
+
+.prose a {
+  color: var(--color-link-secondary);
+  text-decoration: underline;
 }
 
 /* Headings within prose */

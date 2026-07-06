@@ -36,7 +36,7 @@ function TestimonialItem({ t }: { t: Testimonial }) {
                 href={t.companyUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: "inherit", textDecoration: "underline" }}
+                style={{ color: "var(--color-link-secondary)", textDecoration: "underline" }}
               >
                 {t.company}
               </Link>

@@ -93,7 +93,7 @@ export default async function BlogPostPage({ params }: Props) {
       />
 
       <style>{`
-        .post-back { color: var(--color-fg-muted); transition: color var(--transition-base); text-decoration: none; }
+        .post-back { color: var(--color-link-secondary); transition: color var(--transition-base); text-decoration: underline; }
         .post-back:hover { color: var(--color-fg); }
       `}</style>
 
