@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION, SOCIAL_ALL_URLS, AUTHOR_EMAIL } from "@/lib/constants";
 import { buildMetadata } from "@/lib/seo";
+import BackgroundText from "@/components/ui/BackgroundText";
 
 export const metadata: Metadata = buildMetadata();
 
@@ -30,6 +31,8 @@ const websiteSchema = {
 export default function HomePage() {
   return (
     <>
+      <BackgroundText src="/background-text/about-me-white.svg" />
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
