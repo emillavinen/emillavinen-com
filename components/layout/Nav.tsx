@@ -1,6 +1,13 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { BACKGROUND_TEXT_BY_PATH } from "@/lib/constants";
 
 export default function Nav() {
+  const pathname = usePathname();
+  const backgroundTextSrc = BACKGROUND_TEXT_BY_PATH[pathname];
+
   return (
     <header
       style={{
@@ -10,8 +17,14 @@ export default function Nav() {
         right: 0,
         zIndex: 100,
         height: "56px",
-        background: "var(--color-bg)",
         fontFamily: "var(--font-sans)",
+        backgroundColor: "var(--color-bg)",
+        ...(backgroundTextSrc && {
+          backgroundImage: `url(${backgroundTextSrc})`,
+          backgroundSize: "100vw 100vh",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "0 0",
+        }),
       }}
     >
       <nav
