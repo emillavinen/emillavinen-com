@@ -9,7 +9,7 @@ const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: SITE_NAME,
-  jobTitle: "Creative Director",
+  jobTitle: "Designer & Creative Director",
   description: SITE_DESCRIPTION,
   url: SITE_URL,
   email: AUTHOR_EMAIL,

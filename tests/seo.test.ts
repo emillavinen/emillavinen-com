@@ -5,13 +5,16 @@ import { SITE_NAME, SITE_URL } from "../lib/constants";
 describe("buildMetadata", () => {
   it("generates homepage title when no title given", () => {
     const meta = buildMetadata();
-    expect(meta.title).toContain(SITE_NAME);
-    expect(meta.title).toContain("Creative Director");
+    const title = (meta.title as { absolute: string }).absolute;
+    expect(title).toContain(SITE_NAME);
+    expect(title).toContain("Creative Director");
   });
 
   it("formats page title correctly", () => {
     const meta = buildMetadata({ title: "Writing" });
-    expect(meta.title).toBe(`Writing — ${SITE_NAME}`);
+    // title is wrapped in `absolute` so the root layout's title.template
+    // doesn't re-append "— Emil Lavinen" a second time.
+    expect((meta.title as { absolute: string }).absolute).toBe(`Writing — ${SITE_NAME}`);
   });
 
   it("sets canonical URL", () => {

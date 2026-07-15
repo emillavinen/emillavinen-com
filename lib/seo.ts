@@ -18,12 +18,14 @@ export function buildMetadata({
 }: PageSeoOptions = {}): Metadata {
   const pageTitle = title
     ? `${title} — ${SITE_NAME}`
-    : `${SITE_NAME} — Creative Director & Brand Strategist, Helsinki`;
+    : `${SITE_NAME} — Designer & Creative Director, Helsinki`;
 
   const url = `${SITE_URL}${path}`;
 
   return {
-    title: pageTitle,
+    // pageTitle already includes the site name, so mark it absolute —
+    // otherwise the root layout's title.template re-appends "— Emil Lavinen".
+    title: { absolute: pageTitle },
     description,
     alternates: { canonical: url },
     openGraph: {

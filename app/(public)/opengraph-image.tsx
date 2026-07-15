@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Emil Lavinen — Creative Director & Brand Strategist, Helsinki";
+export const alt = "Emil Lavinen — Designer & Creative Director, Helsinki";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -31,7 +31,7 @@ export default function Image() {
               textTransform: "uppercase",
             }}
           >
-            Creative Director &amp; Brand Strategist
+            Designer &amp; Creative Director
           </p>
           <h1
             style={{

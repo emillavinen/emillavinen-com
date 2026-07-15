@@ -1,7 +1,7 @@
 export const SITE_NAME = "Emil Lavinen";
 export const SITE_URL = "https://emillavinen.com";
 export const SITE_DESCRIPTION =
-  "Emil Lavinen is a Helsinki-based Creative Director and Brand Strategist working at the intersection of visual identity, brand strategy, and music culture.";
+  "Emil Lavinen is a Helsinki-based designer and creative director, working at a Finnish product and design studio with a background in music and event direction.";
 export const AUTHOR_NAME = "Emil Lavinen";
 export const AUTHOR_EMAIL = "emil.lavinen@gmail.com";
 

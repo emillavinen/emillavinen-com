@@ -111,7 +111,7 @@ async function enhanceTags(
 
   const raw = await callOpenAI(
     client,
-    'You are an SEO content strategist. Given this blog post content, generate 5-8 highly specific tags that: include at least one broad category tag, at least one specific long-tail tag, at least two tags matching terms a potential client searching for a Creative Director or Brand Strategist would use, and at least one topic-specific tag. Return only a JSON array of tag strings in lowercase with hyphens, nothing else.',
+    'You are an SEO content strategist. Given this blog post content, generate 5-8 highly specific tags that: include at least one broad category tag, at least one specific long-tail tag, at least two tags matching terms a reader searching for a designer or creative director would use, and at least one topic-specific tag. Return only a JSON array of tag strings in lowercase with hyphens, nothing else.',
     `Content:\n${content.slice(0, 3000)}`
   );
 

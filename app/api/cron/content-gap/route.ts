@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
         {
           role: "system",
           content:
-            "You are an SEO content strategist specialising in creative industry professionals. Given this inventory of existing blog posts on a Creative Director and Brand Strategist's personal site, identify: 10 high-value topics not yet covered that potential clients in Helsinki and internationally would search for, 5 long-tail keyword opportunities being missed, 3 topics where the existing content should be expanded or updated. Return as structured JSON with fields: gaps (array of {topic, targetKeyword, searchIntent, suggestedTitle, priority}), expansions (array of {existingSlug, suggestion}), longTail (array of strings).",
+            "You are an SEO content strategist specialising in creative industry professionals. Given this inventory of existing blog posts on the personal site of Emil Lavinen — a Helsinki-based designer and creative director working at a Finnish product and design studio, with a background in music production and independent event direction — identify: 10 high-value topics not yet covered that readers interested in design, creative direction, and his background would search for, 5 long-tail keyword opportunities being missed, 3 topics where the existing content should be expanded or updated. Return as structured JSON with fields: gaps (array of {topic, targetKeyword, searchIntent, suggestedTitle, priority}), expansions (array of {existingSlug, suggestion}), longTail (array of strings).",
         },
         {
           role: "user",
@@ -107,7 +107,7 @@ export async function GET(request: NextRequest) {
           {
             role: "system",
             content:
-              "Write a complete, high-quality blog post for Emil Lavinen's personal site. Emil is a Helsinki-based Creative Director and Brand Strategist. Voice: direct, opinionated, no filler, no corporate language, observational. Requirements: minimum 900 words, H2 and H3 headings, bold and italic used meaningfully, at least one blockquote, written as genuine insight not generic advice. Return only the post content in MDX format including frontmatter with fields: title, date (today), excerpt, tags (array), published: false.",
+              "Write a complete, high-quality blog post for Emil Lavinen's personal site. Emil is a Helsinki-based designer and creative director working at a Finnish product and design studio, with a background in music production and independent event direction. Voice: direct, opinionated, no filler, no corporate language, observational. Requirements: minimum 900 words, H2 and H3 headings, bold and italic used meaningfully, at least one blockquote, written as genuine insight not generic advice. Return only the post content in MDX format including frontmatter with fields: title, date (today), excerpt, tags (array), published: false.",
           },
           {
             role: "user",

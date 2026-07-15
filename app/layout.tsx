@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { Space_Mono } from "next/font/google";
+import { SITE_DESCRIPTION } from "@/lib/constants";
 import "./globals.css";
 
 const spaceMono = Space_Mono({
@@ -13,11 +14,10 @@ const spaceMono = Space_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Emil Lavinen — Creative Director & Brand Strategist, Helsinki",
+    default: "Emil Lavinen — Designer & Creative Director, Helsinki",
     template: "%s — Emil Lavinen",
   },
-  description:
-    "Emil Lavinen is a Creative Director and Brand Strategist based in Helsinki, working at the intersection of design, brand, and culture.",
+  description: SITE_DESCRIPTION,
   metadataBase: new URL("https://emillavinen.com"),
   robots: {
     index: true,
@@ -29,23 +29,21 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://emillavinen.com",
     siteName: "Emil Lavinen",
-    title: "Emil Lavinen — Creative Director & Brand Strategist, Helsinki",
-    description:
-      "Emil Lavinen is a Creative Director and Brand Strategist based in Helsinki, working at the intersection of design, brand, and culture.",
+    title: "Emil Lavinen — Designer & Creative Director, Helsinki",
+    description: SITE_DESCRIPTION,
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Emil Lavinen — Creative Director & Brand Strategist, Helsinki",
+        alt: "Emil Lavinen — Designer & Creative Director, Helsinki",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Emil Lavinen — Creative Director & Brand Strategist, Helsinki",
-    description:
-      "Emil Lavinen is a Creative Director and Brand Strategist based in Helsinki, working at the intersection of design, brand, and culture.",
+    title: "Emil Lavinen — Designer & Creative Director, Helsinki",
+    description: SITE_DESCRIPTION,
     images: ["/opengraph-image"],
   },
 };
