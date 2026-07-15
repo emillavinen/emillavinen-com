@@ -45,13 +45,13 @@ export async function GET() {
   <channel>
     <title>${escapeXml(SITE_NAME)}</title>
     <link>${SITE_URL}</link>
-    <description>Essays on brand strategy, creative direction, visual identity, and culture by Emil Lavinen.</description>
+    <description>Essays on design, creative direction, and culture by Emil Lavinen.</description>
     <language>en-gb</language>
     <copyright>Copyright ${new Date().getFullYear()} ${SITE_NAME}</copyright>
     <managingEditor>${AUTHOR_EMAIL} (${SITE_NAME})</managingEditor>
     <webMaster>${AUTHOR_EMAIL} (${SITE_NAME})</webMaster>
     <lastBuildDate>${buildDate}</lastBuildDate>
-    <category>Brand Strategy</category>
+    <category>Design</category>
     <category>Creative Direction</category>
     <generator>emillavinen.com</generator>
     <image>
