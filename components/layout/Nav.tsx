@@ -38,14 +38,24 @@ export default function Nav() {
           justifyContent: "space-between",
         }}
       >
-        <Link href="/" style={{ display: "flex", alignItems: "center" }} className="nav-wordmark">
-          <img src="/logo.svg" alt="Emil Lavinen" width={32} height={32} />
+        <Link
+          href="/"
+          style={{
+            fontFamily: "var(--font-sans)",
+            fontSize: "var(--text-sm)",
+            fontWeight: 400,
+            letterSpacing: "var(--tracking-widest)",
+            textDecoration: "underline",
+            color: "var(--color-link-secondary)",
+          }}
+          className="nav-wordmark"
+        >
+          emillavinen.com
         </Link>
       </nav>
 
       <style>{`
-        .nav-wordmark { transition: opacity var(--transition-base); }
-        .nav-wordmark:hover { opacity: 0.7; }
+        .nav-wordmark:hover { color: var(--color-fg) !important; }
       `}</style>
     </header>
   );
