@@ -41,15 +41,20 @@ export default function Nav() {
         <Link
           href="/"
           style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "var(--space-2)",
             fontFamily: "var(--font-sans)",
             fontSize: "var(--text-sm)",
             fontWeight: 400,
             letterSpacing: "var(--tracking-widest)",
+            textTransform: "uppercase",
             textDecoration: "underline",
             color: "var(--color-link-secondary)",
           }}
           className="nav-wordmark"
         >
+          <img src="/logo.svg" alt="" width={24} height={24} />
           emil lavinen
         </Link>
       </nav>

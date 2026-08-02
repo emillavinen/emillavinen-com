@@ -15,10 +15,10 @@ export default function Footer() {
           justifyContent: "space-between",
         }}
       >
-        <p style={{ fontSize: "var(--text-xs)", letterSpacing: "var(--tracking-wide)", color: "var(--color-fg-muted)", margin: 0 }}>
+        <p style={{ fontSize: "var(--text-xs)", letterSpacing: "var(--tracking-wide)", color: "var(--color-fg-muted)", margin: 0, textTransform: "uppercase" }}>
           © {new Date().getFullYear()} emil lavinen
         </p>
-        <p style={{ fontSize: "var(--text-xs)", letterSpacing: "var(--tracking-wide)", color: "var(--color-fg-muted)", margin: 0 }}>
+        <p style={{ fontSize: "var(--text-xs)", letterSpacing: "var(--tracking-wide)", color: "var(--color-fg-muted)", margin: 0, textTransform: "uppercase" }}>
           helsinki
         </p>
       </div>

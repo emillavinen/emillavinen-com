@@ -23,6 +23,7 @@ export default function ContactBar() {
           color: var(--color-link-secondary);
           transition: color var(--transition-base);
           text-decoration: underline;
+          text-transform: uppercase;
           font-size: var(--text-xs);
           letter-spacing: var(--tracking-widest);
           font-family: var(--font-sans);
