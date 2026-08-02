@@ -19,13 +19,16 @@ export function buildMetadata({
   const pageTitle = title
     ? `${title} — ${SITE_NAME}`
     : `${SITE_NAME} — Designer & Creative Director, Helsinki`;
+  // The homepage's browser-tab title is just the bare domain; social
+  // share cards (openGraph/twitter below) keep the fuller pageTitle.
+  const tabTitle = title ? pageTitle : SITE_URL.replace(/^https?:\/\//, "");
 
   const url = `${SITE_URL}${path}`;
 
   return {
     // pageTitle already includes the site name, so mark it absolute —
     // otherwise the root layout's title.template re-appends "— Emil Lavinen".
-    title: { absolute: pageTitle },
+    title: { absolute: tabTitle },
     description,
     alternates: { canonical: url },
     openGraph: {

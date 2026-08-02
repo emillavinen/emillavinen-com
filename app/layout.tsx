@@ -14,7 +14,7 @@ const spaceMono = Space_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Emil Lavinen — Designer & Creative Director, Helsinki",
+    default: "emillavinen.com",
     template: "%s — Emil Lavinen",
   },
   description: SITE_DESCRIPTION,
