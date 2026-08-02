@@ -3,7 +3,13 @@ import { SITE_NAME, SITE_URL, SITE_DESCRIPTION, SOCIAL_ALL_URLS, AUTHOR_EMAIL } 
 import { buildMetadata } from "@/lib/seo";
 import BackgroundText from "@/components/ui/BackgroundText";
 
-export const metadata: Metadata = buildMetadata();
+const homeMetadata = buildMetadata({ description: "I DESIGN; ANALYZE; DIRECT" });
+
+export const metadata: Metadata = {
+  ...homeMetadata,
+  openGraph: { ...homeMetadata.openGraph, title: "emil lavinen ©" },
+  twitter: { ...homeMetadata.twitter, title: "emil lavinen ©" },
+};
 
 const personSchema = {
   "@context": "https://schema.org",
