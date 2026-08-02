@@ -62,7 +62,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="alternate" type="application/rss+xml" title="Emil Lavinen" href="/feed.xml" />
-        <meta name="theme-color" content="#0A0A0A" />
+        <meta name="theme-color" content="#FFFFFF" />
         <meta name="msapplication-TileColor" content="#0A0A0A" />
         <meta name="msapplication-TileImage" content="/icons/mstile-150x150.png" />
       </head>
