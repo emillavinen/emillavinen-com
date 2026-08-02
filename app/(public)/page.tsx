@@ -50,7 +50,7 @@ export default function HomePage() {
           fontFamily: "var(--font-sans)",
         }}
       >
-        <div style={{ maxWidth: "680px" }}>
+        <div style={{ maxWidth: "680px", textAlign: "justify", textAlignLast: "left", textTransform: "uppercase" }}>
           <h1
             style={{
               fontSize: "var(--text-2xl)",
