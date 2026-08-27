@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION, SOCIAL_ALL_URLS, AUTHOR_EMAIL } from "@/lib/constants";
 import { buildMetadata } from "@/lib/seo";
 import { WORK } from "@/lib/work";
-import BackgroundText from "@/components/ui/BackgroundText";
 import WorkList from "@/components/home/WorkList";
 
 const homeMetadata = buildMetadata({ description: "I DESIGN; ANALYZE; DIRECT" });
@@ -57,8 +56,6 @@ const workSchema = {
 export default function HomePage() {
   return (
     <>
-      <BackgroundText src="/background-text/about-me-white.svg" />
-
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}

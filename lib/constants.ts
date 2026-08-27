@@ -31,6 +31,4 @@ export const SOCIAL_ALL_URLS = Object.values(SOCIAL_LINKS).filter(
 // components/ui/BackgroundText.tsx), so Nav can paint a matching slice of
 // the same artwork behind itself instead of an opaque fill. Add an entry
 // here whenever a page starts using BackgroundText.
-export const BACKGROUND_TEXT_BY_PATH: Record<string, string> = {
-  "/": "/background-text/about-me-white.svg",
-};
+export const BACKGROUND_TEXT_BY_PATH: Record<string, string> = {};
