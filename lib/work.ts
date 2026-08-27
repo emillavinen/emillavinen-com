@@ -43,26 +43,26 @@ export interface WorkProject {
 
 export const WORK: WorkProject[] = [
   {
-    id: "balaclava-wags",
-    title: "Balaclava Wags",
+    id: "balaclava-dawgs",
+    title: "Balaclava Dawgs",
     year: "2023",
     media: [
       {
         kind: "image",
         src: "/work/balaclava-print.jpg",
         full: "/work/balaclava-print-full.jpg",
-        alt: "Balaclava Wags print poster — black knitted mask on a light ground, with a QR code to the Instagram post",
+        alt: "Balaclava Dawgs print poster — black knitted mask on a light ground, with a QR code to the Instagram post",
       },
       {
         kind: "video",
         src: "/work/balaclava-digital-preview.mp4",
         poster: "/work/balaclava-digital.jpg",
         full: "/work/balaclava-digital-full.mp4",
-        alt: "Balaclava Wags digital poster, animated — the white knitted mask on black glitching and tearing, with entrance pricing",
+        alt: "Balaclava Dawgs digital poster, animated — the white knitted mask on black glitching and tearing, with entrance pricing",
       },
     ],
     body: [
-      "The organizers were moving the event away from trend-led lineups toward straight techno, and the poster had to read as that shift. The balaclava is both the event's name and what the crowd actually wears, so the whole sheet is built on one mask, high-contrast black and white, emerging out of a cascade of the wordmark repeating and flipping down the page.",
+      "The organizers were moving the event away from trend-led lineups toward straight techno, and the poster had to read as that shift. The balaclava is both the event's name and what the crowd actually wears, so the whole sheet is built on one mask. Three formats, digital poster, printable poster with QR code and animated version for social media advertisement.",
     ],
   },
   {
