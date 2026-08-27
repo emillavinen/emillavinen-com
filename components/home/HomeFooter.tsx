@@ -1,18 +1,18 @@
-import Link from "next/link";
 import { SOCIAL_LINKS } from "@/lib/constants";
 
 /**
  * Homepage footer — one centered row of small links, replacing the
- * Footer + ContactBar pair the other public routes use. Keeps the contact
- * routes and the blog reachable from a page that is otherwise just the
- * wordmark and the work list.
+ * Footer + ContactBar pair the other public routes use. The homepage is
+ * the projects and the ways to reach Emil, nothing else, so this is the
+ * whole of it.
  */
 const LINKS = [
-  { href: SOCIAL_LINKS.email, label: "Email", external: false },
-  { href: SOCIAL_LINKS.instagram, label: "Instagram", external: true },
-  { href: SOCIAL_LINKS.behance, label: "Behance", external: true },
-  { href: SOCIAL_LINKS.linkedin, label: "LinkedIn", external: true },
-  { href: SOCIAL_LINKS.spotify, label: "Spotify", external: true },
+  { href: SOCIAL_LINKS.email, label: "email", external: false },
+  { href: SOCIAL_LINKS.instagram, label: "instagram", external: true },
+  { href: SOCIAL_LINKS.behance, label: "behance", external: true },
+  { href: SOCIAL_LINKS.linkedin, label: "linkedin", external: true },
+  { href: SOCIAL_LINKS.spotify, label: "spotify", external: true },
+  { href: SOCIAL_LINKS.pinterest, label: "pinterest", external: true },
 ];
 
 export default function HomeFooter() {
@@ -36,7 +36,7 @@ export default function HomeFooter() {
           font-size: var(--text-xs);
           font-weight: 400;
           letter-spacing: 0.08em;
-          text-transform: uppercase;
+          text-transform: lowercase;
           text-decoration: none;
           color: var(--color-fg-muted);
           transition: color var(--transition-base);
@@ -45,7 +45,6 @@ export default function HomeFooter() {
       `}</style>
 
       <div className="home-footer__row">
-        <Link href="/blog">Writing</Link>
         {LINKS.map(({ href, label, external }) => (
           <a
             key={label}

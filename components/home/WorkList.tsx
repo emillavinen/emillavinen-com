@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { WORK } from "@/lib/work";
+import Lightbox from "./Lightbox";
 
 /**
  * The homepage list: one row per project, title left and year right, each
@@ -12,9 +13,19 @@ import { WORK } from "@/lib/work";
  * technique rather than animating `max-height` to a guessed pixel cap, so
  * a row expands to exactly its own height no matter how tall the images
  * or how far the copy reflows at narrow widths.
+ *
+ * Tapping a poster opens it fullscreen — see Lightbox.tsx.
  */
+interface Viewing {
+  projectId: string;
+  index: number;
+}
+
 export default function WorkList() {
   const [openId, setOpenId] = useState<string | null>(null);
+  const [viewing, setViewing] = useState<Viewing | null>(null);
+
+  const viewingProject = viewing ? WORK.find((p) => p.id === viewing.projectId) : undefined;
 
   return (
     <section className="work">
@@ -78,14 +89,27 @@ export default function WorkList() {
           gap: var(--space-2);
           margin-bottom: var(--space-4);
         }
-        .work__images img {
+        .work__thumb {
+          display: block;
+          width: 100%;
+          padding: 0;
+          border: none;
+          background: none;
+          cursor: zoom-in;
+          line-height: 0;
+        }
+        .work__thumb img {
           display: block;
           width: 100%;
           height: auto;
-          aspect-ratio: 4 / 5;
+          /* The posters' own proportions, so nothing is cropped while
+             every cell in the row still lines up. */
+          aspect-ratio: 800 / 1020;
           object-fit: cover;
           background: var(--color-bg-secondary);
+          transition: opacity var(--transition-base);
         }
+        .work__thumb:hover img { opacity: 0.82; }
 
         .work__text p {
           margin: 0 0 var(--space-4);
@@ -139,17 +163,24 @@ export default function WorkList() {
               <div className="work__inner" inert={!isOpen}>
                 {project.images && (
                   <div className="work__images">
-                    {project.images.map((image) => (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
+                    {project.images.map((image, index) => (
+                      <button
                         key={image.src}
-                        src={image.src}
-                        alt={image.alt}
-                        width={800}
-                        height={1000}
-                        decoding="async"
-                        fetchPriority="low"
-                      />
+                        type="button"
+                        className="work__thumb"
+                        onClick={() => setViewing({ projectId: project.id, index })}
+                        aria-label={`View full screen: ${image.alt}`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={image.src}
+                          alt={image.alt}
+                          width={800}
+                          height={1020}
+                          decoding="async"
+                          fetchPriority="low"
+                        />
+                      </button>
                     ))}
                   </div>
                 )}
@@ -170,6 +201,15 @@ export default function WorkList() {
           </div>
         );
       })}
+
+      {viewing && viewingProject?.images && (
+        <Lightbox
+          images={viewingProject.images}
+          startIndex={viewing.index}
+          label={viewingProject.title}
+          onClose={() => setViewing(null)}
+        />
+      )}
     </section>
   );
 }
