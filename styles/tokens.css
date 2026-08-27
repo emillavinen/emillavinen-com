@@ -1,9 +1,15 @@
 :root {
   /* ── Typefaces ──────────────────────────────────────────────────────────────
-   * Space Mono 400 — loaded via next/font (self-hosted, no external requests). */
-  --font-sans:    var(--font-space-mono), "Courier New", Courier, monospace;
-  --font-display: var(--font-space-mono), "Courier New", Courier, monospace;
-  --font-mono:    var(--font-space-mono), ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+   * Monospac821 BT, 400 and 700 — loaded via next/font/local from
+   * app/fonts (self-hosted, no external requests). One family for the
+   * whole site; the three aliases are kept so existing rules keep
+   * working, and all three now resolve to the same face.
+   *
+   * The font has no € (U+20AC) or ← (U+2190). The blog post back-link
+   * uses ←, which the browser picks up from the fallback stack. */
+  --font-sans:    var(--font-monospac821), ui-monospace, "SFMono-Regular", Menlo, Consolas, "Courier New", monospace;
+  --font-display: var(--font-monospac821), ui-monospace, "SFMono-Regular", Menlo, Consolas, "Courier New", monospace;
+  --font-mono:    var(--font-monospac821), ui-monospace, "SFMono-Regular", Menlo, Consolas, "Courier New", monospace;
 
   /* ── Type scale ─────────────────────────────────────────────────────────── */
   --text-xs:   0.75rem;    /*  12px */

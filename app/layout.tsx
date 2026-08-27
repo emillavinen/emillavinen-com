@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
-import { Space_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { SITE_DESCRIPTION } from "@/lib/constants";
 import "./globals.css";
 
-const spaceMono = Space_Mono({
-  subsets: ["latin"],
-  variable: "--font-space-mono",
+// Monospac821 BT — the site's only typeface, self-hosted from
+// app/fonts (the CSP in middleware.ts allows font-src 'self' only).
+// Both weights are wired up: 400 for body copy, 700 for the work-list
+// rows and other headings.
+const monospac821 = localFont({
+  src: [
+    { path: "./fonts/Monospac821BT-Roman.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/Monospac821BT-Bold.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-monospac821",
   display: "swap",
-  weight: "400",
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"],
 });
 
 export const metadata: Metadata = {
@@ -54,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${spaceMono.variable} h-full`}>
+    <html lang="en" className={`${monospac821.variable} h-full`}>
       <head>
         <link rel="icon" type="image/x-icon" href="/icons/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />

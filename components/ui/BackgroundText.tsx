@@ -21,10 +21,13 @@ interface BackgroundTextProps {
  * production unless `images.dangerouslyAllowSVG` is set (which would 400
  * this every time).
  *
- * ALSO ADD the same `src` to BACKGROUND_TEXT_BY_PATH in lib/constants.ts —
- * Nav reads that map to paint a matching slice of this artwork behind
- * itself (see components/layout/Nav.tsx) instead of a plain fill, so the
- * background continues seamlessly underneath the fixed header.
+ * ON A ROUTE THAT RENDERS Nav, also add the same `src` to
+ * BACKGROUND_TEXT_BY_PATH in lib/constants.ts — Nav reads that map to
+ * paint a matching slice of this artwork behind itself (see
+ * components/layout/Nav.tsx) instead of a plain fill, so the background
+ * continues seamlessly underneath the fixed header. The homepage does
+ * not need an entry: it renders Wordmark, which is static and
+ * transparent, so the artwork already shows through.
  */
 export default function BackgroundText({ src }: BackgroundTextProps) {
   return (
