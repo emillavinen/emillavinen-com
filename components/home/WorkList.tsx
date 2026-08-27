@@ -92,6 +92,7 @@ export default function WorkList() {
           margin-bottom: var(--space-4);
         }
         .work__thumb {
+          position: relative;
           display: block;
           width: 100%;
           padding: 0;
@@ -100,8 +101,7 @@ export default function WorkList() {
           cursor: zoom-in;
           line-height: 0;
         }
-        .work__thumb img,
-        .work__thumb video {
+        .work__thumb img {
           display: block;
           width: 100%;
           height: auto;
@@ -112,8 +112,22 @@ export default function WorkList() {
           background: var(--color-bg-secondary);
           transition: opacity var(--transition-base);
         }
-        .work__thumb:hover img,
-        .work__thumb:hover video { opacity: 0.82; }
+        /* A motion cell stacks the loop over its poster frame; the video
+           is revealed only once it is really playing, so every stalled,
+           refused or paused state falls back to the poster rather than
+           to the animation's black first frame. See WorkThumb.tsx. */
+        .work__thumb video {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          opacity: 0;
+          transition: opacity var(--transition-base);
+        }
+        .work__thumb video.is-playing { opacity: 1; }
+        .work__thumb:hover img { opacity: 0.82; }
+        .work__thumb:hover video.is-playing { opacity: 0.82; }
 
         .work__text p {
           margin: 0 0 var(--space-4);
