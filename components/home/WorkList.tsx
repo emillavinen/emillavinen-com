@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { WORK } from "@/lib/work";
 import Lightbox from "./Lightbox";
+import WorkThumb from "./WorkThumb";
 
 /**
  * The homepage list: one row per project, title left and year right, each
@@ -14,7 +15,8 @@ import Lightbox from "./Lightbox";
  * a row expands to exactly its own height no matter how tall the images
  * or how far the copy reflows at narrow widths.
  *
- * Tapping a poster opens it fullscreen — see Lightbox.tsx.
+ * Tapping a poster — still or motion — opens it fullscreen; see
+ * WorkThumb.tsx for the grid cell and Lightbox.tsx for the viewer.
  */
 interface Viewing {
   projectId: string;
@@ -98,7 +100,8 @@ export default function WorkList() {
           cursor: zoom-in;
           line-height: 0;
         }
-        .work__thumb img {
+        .work__thumb img,
+        .work__thumb video {
           display: block;
           width: 100%;
           height: auto;
@@ -109,7 +112,8 @@ export default function WorkList() {
           background: var(--color-bg-secondary);
           transition: opacity var(--transition-base);
         }
-        .work__thumb:hover img { opacity: 0.82; }
+        .work__thumb:hover img,
+        .work__thumb:hover video { opacity: 0.82; }
 
         .work__text p {
           margin: 0 0 var(--space-4);
@@ -161,26 +165,15 @@ export default function WorkList() {
               aria-label={project.title}
             >
               <div className="work__inner" inert={!isOpen}>
-                {project.images && (
+                {project.media && (
                   <div className="work__images">
-                    {project.images.map((image, index) => (
-                      <button
-                        key={image.src}
-                        type="button"
-                        className="work__thumb"
-                        onClick={() => setViewing({ projectId: project.id, index })}
-                        aria-label={`View full screen: ${image.alt}`}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={image.src}
-                          alt={image.alt}
-                          width={800}
-                          height={1020}
-                          decoding="async"
-                          fetchPriority="low"
-                        />
-                      </button>
+                    {project.media.map((media, index) => (
+                      <WorkThumb
+                        key={media.src}
+                        media={media}
+                        active={isOpen}
+                        onOpen={() => setViewing({ projectId: project.id, index })}
+                      />
                     ))}
                   </div>
                 )}
@@ -202,9 +195,9 @@ export default function WorkList() {
         );
       })}
 
-      {viewing && viewingProject?.images && (
+      {viewing && viewingProject?.media && (
         <Lightbox
-          images={viewingProject.images}
+          media={viewingProject.media}
           startIndex={viewing.index}
           label={viewingProject.title}
           onClose={() => setViewing(null)}

@@ -3,22 +3,40 @@
  * (see components/home/WorkList.tsx): the title and year are always
  * visible, everything else appears when the row is opened.
  *
- * A project with no `images` and no `body` falls back to `placeholder`,
+ * A project with no `media` and no `body` falls back to `placeholder`,
  * which is how in-progress work is shown without a case study.
  */
+
+/** A still. `src` is the grid thumbnail, `full` the version the viewer opens. */
 export interface WorkImage {
-  /** Grid thumbnail — 800px wide. */
+  kind: "image";
   src: string;
-  /** 1600px version, fetched only when the lightbox opens on this image. */
+  /** 1600px version, fetched only when the viewer opens on this item. */
   full: string;
   alt: string;
 }
+
+/**
+ * A motion piece. `src` is a small silent cut that loops in the grid
+ * while the row is open; `full` is the original, with sound, which only
+ * starts downloading once the viewer opens on it.
+ */
+export interface WorkVideo {
+  kind: "video";
+  src: string;
+  /** Frame shown before the loop has loaded, and in the viewer's poster slot. */
+  poster: string;
+  full: string;
+  alt: string;
+}
+
+export type WorkMedia = WorkImage | WorkVideo;
 
 export interface WorkProject {
   id: string;
   title: string;
   year: string;
-  images?: WorkImage[];
+  media?: WorkMedia[];
   body?: string[];
   placeholder?: string;
 }
@@ -28,16 +46,19 @@ export const WORK: WorkProject[] = [
     id: "balaclava-wags",
     title: "Balaclava Wags",
     year: "2023",
-    images: [
+    media: [
       {
+        kind: "image",
         src: "/work/balaclava-print.jpg",
         full: "/work/balaclava-print-full.jpg",
         alt: "Balaclava Wags print poster — black knitted mask on a light ground, with a QR code to the Instagram post",
       },
       {
-        src: "/work/balaclava-digital.jpg",
-        full: "/work/balaclava-digital-full.jpg",
-        alt: "Balaclava Wags digital poster — white knitted mask on black, with entrance pricing",
+        kind: "video",
+        src: "/work/balaclava-digital-preview.mp4",
+        poster: "/work/balaclava-digital.jpg",
+        full: "/work/balaclava-digital-full.mp4",
+        alt: "Balaclava Wags digital poster, animated — the white knitted mask on black glitching and tearing, with entrance pricing",
       },
     ],
     body: [
