@@ -164,8 +164,6 @@ export const alerts = pgTable("alerts", {
   firstAt: ts("first_at").notNull(),
   lastSentAt: ts("last_sent_at"),
   resolvedAt: ts("resolved_at"),
-  /** Claimed by the run that is about to send, so overlapping runs never double-send. */
-  claimedAt: ts("claimed_at"),
 });
 
 export const pinterestBoards = pgTable("pinterest_boards", {

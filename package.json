@@ -4,13 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/dispatch/migrate.mjs && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "generate-icons": "npx tsx scripts/generate-icons.ts"
+    "generate-icons": "npx tsx scripts/generate-icons.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node --env-file-if-exists=.env.local scripts/dispatch/migrate.mjs",
+    "import": "tsx --env-file-if-exists=.env.local scripts/dispatch/import.ts",
+    "pinterest:download": "tsx scripts/dispatch/pinterest-download.ts"
   },
   "dependencies": {
     "@atproto/api": "0.22.0",
