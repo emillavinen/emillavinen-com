@@ -7,6 +7,7 @@ import { SOCIAL_LINKS } from "@/lib/constants";
  * whole of it.
  */
 const LINKS = [
+  { href: "/work", label: "work", external: false },
   { href: SOCIAL_LINKS.email, label: "email", external: false },
   { href: SOCIAL_LINKS.instagram, label: "instagram", external: true },
   { href: SOCIAL_LINKS.behance, label: "behance", external: true },

@@ -47,9 +47,11 @@ export async function saveCredentials(
     ...(extra.tokenExpiresAt !== undefined ? { tokenExpiresAt: extra.tokenExpiresAt } : {}),
     ...(extra.refreshed ? { tokenRefreshedAt: now } : {}),
   };
+  // A new row starts `disabled`; enabling it (and backfilling held
+  // deliveries) is the job of enablePlatform, so it happens exactly once.
   await db
     .insert(platformState)
-    .values({ platform, status: "ok", ...values })
+    .values({ platform, status: "disabled", ...values })
     .onConflictDoUpdate({ target: platformState.platform, set: values });
 }
 

@@ -52,6 +52,21 @@ export default function Nav() {
         >
           emillavinen.com
         </Link>
+
+        <Link
+          href="/work"
+          style={{
+            fontFamily: "var(--font-sans)",
+            fontSize: "var(--text-sm)",
+            fontWeight: 400,
+            letterSpacing: "var(--tracking-widest)",
+            textDecoration: "underline",
+            color: pathname.startsWith("/work") ? "var(--color-fg)" : "var(--color-link-secondary)",
+          }}
+          className="nav-wordmark"
+        >
+          work
+        </Link>
       </nav>
 
       <style>{`

@@ -163,11 +163,7 @@ async function syncPlatforms(deps: RunnerDeps, deadline: number): Promise<Platfo
       }
       continue;
     }
-    if (!state || state.status === "disabled") {
-      await setStatus(db, platform, now, "ok", null);
-      await backfillHeld(db, platform, now);
-      await logEvent(db, now, { type: "platform_enabled", platform, message: "existing works get held deliveries (backlog)" });
-    }
+    if (!state || state.status === "disabled") await enablePlatform(db, platform, now);
     try {
       const result = await adapter.maintain?.(adapterCtx(deps, config, platform, deadline));
       const expiresAt = result && result.expiresAt;
@@ -191,6 +187,16 @@ async function syncPlatforms(deps: RunnerDeps, deadline: number): Promise<Platfo
   }
   config = await platformConfig(db);
   return config;
+}
+
+/**
+ * A platform that just became usable: status ok, and every existing work
+ * gets a `held` delivery for it (backlog, never pending — no floods).
+ */
+export async function enablePlatform(db: RunnerDeps["db"], platform: Platform, now: Date): Promise<void> {
+  await setStatus(db, platform, now, "ok", null);
+  await backfillHeld(db, platform, now);
+  await logEvent(db, now, { type: "platform_enabled", platform, message: "existing works get held deliveries (backlog)" });
 }
 
 async function pausePlatform(deps: RunnerDeps, platform: Platform, message: string): Promise<void> {

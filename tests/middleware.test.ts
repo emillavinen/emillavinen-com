@@ -1,37 +1,40 @@
 import { describe, it, expect } from "vitest";
-
-async function sha256Hex(text: string): Promise<string> {
-  const buf = new TextEncoder().encode(text);
-  const digest = await crypto.subtle.digest("SHA-256", buf);
-  return Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
+import { createSessionToken, verifySessionToken, SESSION_TTL_MS } from "../lib/admin-session";
 
 describe("admin session token", () => {
-  it("produces a consistent sha256 hash", async () => {
-    const hash1 = await sha256Hex("mypassword" + "admin-session");
-    const hash2 = await sha256Hex("mypassword" + "admin-session");
-    expect(hash1).toBe(hash2);
+  it("verifies a token signed with the same password", async () => {
+    const token = await createSessionToken("mypassword");
+    expect(await verifySessionToken(token, "mypassword")).toBe(true);
   });
 
-  it("produces different hashes for different passwords", async () => {
-    const hash1 = await sha256Hex("password1" + "admin-session");
-    const hash2 = await sha256Hex("password2" + "admin-session");
-    expect(hash1).not.toBe(hash2);
+  it("rejects a token signed with a different password", async () => {
+    const token = await createSessionToken("password1");
+    expect(await verifySessionToken(token, "password2")).toBe(false);
   });
 
-  it("produces a 64-character hex string", async () => {
-    const hash = await sha256Hex("test" + "admin-session");
-    expect(hash).toHaveLength(64);
-    expect(/^[0-9a-f]+$/.test(hash)).toBe(true);
+  it("rejects an expired token", async () => {
+    const issued = Date.now() - SESSION_TTL_MS - 1000;
+    const token = await createSessionToken("pw", issued);
+    expect(await verifySessionToken(token, "pw")).toBe(false);
+  });
+
+  it("rejects a tampered expiry", async () => {
+    const token = await createSessionToken("pw");
+    const [v, exp, sig] = token.split(".");
+    expect(await verifySessionToken(`${v}.${Number(exp) + 1_000_000}.${sig}`, "pw")).toBe(false);
+  });
+
+  it("rejects the old unsigned sha256 cookie format and missing values", async () => {
+    expect(await verifySessionToken("a".repeat(64), "pw")).toBe(false);
+    expect(await verifySessionToken(undefined, "pw")).toBe(false);
+    expect(await verifySessionToken(await createSessionToken("pw"), undefined)).toBe(false);
   });
 });
 
 describe("admin route protection", () => {
   it("allows /admin/login without auth", () => {
     const publicPaths = ["/admin/login", "/api/admin/auth"];
-    const protectedPaths = ["/admin", "/admin/posts", "/admin/posts/new", "/api/admin/posts"];
+    const protectedPaths = ["/admin", "/admin/posts", "/admin/posts/new", "/api/admin/posts", "/admin/drop", "/api/admin/dispatch/upload"];
 
     for (const path of publicPaths) {
       expect(path === "/admin/login" || path === "/api/admin/auth").toBe(true);

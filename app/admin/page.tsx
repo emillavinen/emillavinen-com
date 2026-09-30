@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listFiles, getFile } from "@/lib/github";
 import matter from "gray-matter";
 import LogoutButton from "@/components/admin/LogoutButton";
+import { AdminNav, AdminStyles } from "@/components/admin/dispatch/AdminChrome";
 
 function normalizeDate(raw: unknown): string {
   if (raw instanceof Date) return raw.toISOString().split("T")[0];
@@ -43,6 +44,8 @@ export default async function AdminDashboard() {
 
   return (
     <div style={{ maxWidth: "768px", margin: "0 auto", padding: "var(--space-12) var(--space-8)", fontFamily: "var(--font-sans)" }}>
+      <AdminStyles />
+      <AdminNav current="/admin" showLogout={false} />
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-12)" }}>
         <h1 style={{ fontSize: "var(--text-base)", fontWeight: 400, letterSpacing: "var(--tracking-widest)", textTransform: "uppercase", color: "var(--color-fg)", margin: 0 }}>Posts</h1>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-6)" }}>
