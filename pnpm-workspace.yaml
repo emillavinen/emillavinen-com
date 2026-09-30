@@ -1,3 +1,8 @@
+# None of these need their install scripts: sharp, esbuild and
+# unrs-resolver ship prebuilt platform binaries as optional
+# dependencies, and core-js's script only prints a banner.
 allowBuilds:
-  sharp: set this to true or false
-  unrs-resolver: set this to true or false
+  core-js: false
+  esbuild: false
+  sharp: false
+  unrs-resolver: false

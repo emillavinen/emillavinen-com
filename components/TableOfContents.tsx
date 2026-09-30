@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import type { TocItem } from "@/lib/toc";
 
 interface Props {
@@ -8,19 +8,23 @@ interface Props {
   wordCount: number;
 }
 
+// Short posts get no table of contents. The check lives in this wrapper so
+// the hooks in TocPanel always run in the same order.
 export default function TableOfContents({ items, wordCount }: Props) {
+  if (wordCount < 800 || items.length < 3) return null;
+  return <TocPanel items={items} />;
+}
+
+function TocPanel({ items }: { items: TocItem[] }) {
   const [activeSlug, setActiveSlug] = useState<string>("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [visible, setVisible] = useState(false);
-  const titleRef = useRef<HTMLHeadingElement | null>(null);
-
-  if (wordCount < 800 || items.length < 3) return null;
 
   useEffect(() => {
     const title = document.querySelector("article h1, [data-toc-title]") as HTMLElement | null;
     if (!title) {
-      setVisible(true);
-      return;
+      const frame = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(frame);
     }
 
     const io = new IntersectionObserver(

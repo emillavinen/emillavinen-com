@@ -3,11 +3,12 @@ import { buildMetadata } from "../lib/seo";
 import { SITE_NAME, SITE_URL } from "../lib/constants";
 
 describe("buildMetadata", () => {
-  it("generates homepage title when no title given", () => {
+  it("uses the bare domain as the homepage tab title, and the full title for sharing", () => {
     const meta = buildMetadata();
-    const title = (meta.title as { absolute: string }).absolute;
-    expect(title).toContain(SITE_NAME);
-    expect(title).toContain("Creative Director");
+    expect((meta.title as { absolute: string }).absolute).toBe(SITE_URL.replace(/^https?:\/\//, ""));
+    const ogTitle = (meta.openGraph as { title: string }).title;
+    expect(ogTitle).toContain(SITE_NAME);
+    expect(ogTitle).toContain("Creative Director");
   });
 
   it("formats page title correctly", () => {
