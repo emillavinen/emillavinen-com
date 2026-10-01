@@ -305,6 +305,8 @@ async function processDue(deps: RunnerDeps, config: PlatformConfig, dryRun: bool
     .limit(30);
 
   const worksThisRun = new Set<string>();
+  // Platforms paused during this run: their other deliveries wait.
+  const pausedNow = new Set<string>();
   let handled = 0;
   for (const d of due) {
     if (handled >= MAX_DELIVERIES_PER_RUN) break;
@@ -323,7 +325,7 @@ async function processDue(deps: RunnerDeps, config: PlatformConfig, dryRun: bool
       await skip(deps, d, "disabled");
       continue;
     }
-    if (state?.status === "needs_attention") continue; // queue paused
+    if (state?.status === "needs_attention" || pausedNow.has(platform)) continue; // queue paused
 
     if (!isInWindow(now, win)) {
       await reschedule(deps, d.id, fitToWindow(now, win, rand));
@@ -385,6 +387,7 @@ async function processDue(deps: RunnerDeps, config: PlatformConfig, dryRun: bool
       report.handled.push({ platform, work: work.title, outcome: "posted" });
     } catch (err) {
       const outcome = await handleFailure(deps, claimed[0], work, platform, text, err);
+      if (err instanceof PlatformError && (err.kind === "auth" || err.kind === "credits")) pausedNow.add(platform);
       report.handled.push({ platform, work: work.title, outcome });
     }
   }
@@ -467,10 +470,10 @@ function describe(d: Delivery): string {
   }
 }
 
-function indent(text: string): string {
+export function indent(text: string): string {
   return text
     .split("\n")
-    .map((l) => `  ${l}`)
+    .map((l) => (l ? `  ${l}` : ""))
     .join("\n");
 }
 

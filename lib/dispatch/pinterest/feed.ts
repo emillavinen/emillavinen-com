@@ -87,9 +87,10 @@ export function parseFeed(xml: string): Feed {
   for (const raw of channel.item ?? []) {
     const item = raw as Record<string, unknown>;
     const link = str(item.link) || str(item.guid);
-    const pinId = link.match(/\/pin\/(\d+)/)?.[1];
+    const pinId = link.match(/\/pin\/([A-Za-z0-9_-]+)/)?.[1];
     const html = str(item.description);
     const imageUrl = html.match(/<img[^>]+src=["']([^"']+)["']/i)?.[1];
+    // Idea/story pins arrive with an empty image; there is nothing to show.
     if (!pinId || !imageUrl) continue;
     const pub = Date.parse(str(item.pubDate));
     items.push({

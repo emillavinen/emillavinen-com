@@ -68,6 +68,11 @@ export function routeFetch(routes: [string | RegExp, Handler][]): typeof fetch &
   const calls: { url: string; init?: RequestInit }[] = [];
   const fn = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
+    if (input instanceof Request && !init) {
+      // Some clients (atproto) pass a Request; record it like (url, init).
+      const body = input.method === "GET" || input.method === "HEAD" ? undefined : await input.clone().text();
+      init = { method: input.method, headers: Object.fromEntries(input.headers.entries()), body };
+    }
     calls.push({ url, init });
     for (const [match, handler] of routes) {
       if (typeof match === "string" ? url.startsWith(match) : match.test(url)) return handler(url, init);
