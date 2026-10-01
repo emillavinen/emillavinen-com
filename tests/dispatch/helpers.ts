@@ -142,6 +142,8 @@ export const DISPATCH_ENV_KEYS = [
   "CAP_X",
   "CAP_ARENA",
   "DISPATCH_SITE_URL",
+  "BLOB_MONTHLY_PUT_BUDGET",
+  "BLOB_STORAGE_BUDGET_MB",
 ];
 
 export function cleanEnv(extra: Record<string, string> = {}): () => void {

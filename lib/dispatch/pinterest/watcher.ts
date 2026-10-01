@@ -1,5 +1,6 @@
 import { and, asc, eq, isNull, lt, or } from "drizzle-orm";
 import { fetchBytes } from "../blob";
+import { BlobBudgetError } from "../budget";
 import { pinterestBoards } from "../config";
 import { feedItems, pinterestBoards as boardsTable } from "../db/schema";
 import { UnsupportedImageError } from "../images";
@@ -194,9 +195,16 @@ export async function processFeedItems(deps: WatcherDeps, deadline: number): Pro
         });
       }
       await db.update(feedItems).set({ processedAt: now, workId: workId ?? null, claimedAt: null, lastError: null }).where(eq(feedItems.pinId, next.pinId));
+      if (!existing) await resolveAlert({ db, now, notifier: deps.notifier }, "blob_budget", "Image storage has room again — waiting pins are being added.");
       processed++;
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
+      if (err instanceof BlobBudgetError) {
+        // Not this pin's fault: release it untouched and stop for this run.
+        await db.update(feedItems).set({ claimedAt: null }).where(eq(feedItems.pinId, next.pinId));
+        await raiseAlert({ db, now, notifier: deps.notifier }, "blob_budget", `${message} Pins wait in the queue and are added automatically when there is room.`);
+        break;
+      }
       const attempts = next.attempts + 1;
       const giveUp = attempts >= MAX_ATTEMPTS || err instanceof UnsupportedImageError;
       await db

@@ -15,6 +15,10 @@ import { PlatformError, type Adapter, type AdapterContext } from "./types";
 
 const GRAPH = "https://graph.threads.net";
 const API = `${GRAPH}/v1.0`;
+// The access-token docs (checked 2026-10-01) use the threads.com hosts for
+// the login window and the code exchange; both domains answer.
+const AUTHORIZE_URL = "https://www.threads.com/oauth/authorize";
+const CODE_EXCHANGE_URL = "https://graph.threads.com/oauth/access_token";
 const DAY = 86_400_000;
 
 interface ThreadsCreds {
@@ -188,13 +192,13 @@ export const threads: Adapter = {
         response_type: "code",
         state,
       });
-      return { url: `https://threads.net/oauth/authorize?${params.toString()}` };
+      return { url: `${AUTHORIZE_URL}?${params.toString()}` };
     },
     async finish(ctx, { code, redirectUri }) {
       const a = app();
       if (!a) throw new PlatformError("auth", "THREADS_APP_ID / THREADS_APP_SECRET are not set");
       const short = await expectJson<{ access_token: string; user_id: string | number }>(
-        await send(ctx.fetch, `${GRAPH}/oauth/access_token`, {
+        await send(ctx.fetch, CODE_EXCHANGE_URL, {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: new URLSearchParams({

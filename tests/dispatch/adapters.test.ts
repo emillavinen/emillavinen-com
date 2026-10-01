@@ -302,6 +302,31 @@ describe("Threads", () => {
     await expectKind(threads.post(ctx(graph({ publish: netFail }), state), payload()), "ambiguous");
   });
 
+  it("Meta rate-limit codes and 429 wait; 5xx retries", async () => {
+    const state = await getState(db, "threads");
+    for (const code of [4, 17, 32, 613]) {
+      const f = routeFetch([["https://graph.threads.net", () => json({ error: { code, message: "Application request limit reached" } }, 400)]]);
+      await expectKind(threads.post(ctx(f, state), payload()), "rate_limited");
+    }
+    await expectKind(threads.post(ctx(routeFetch([["https://graph.threads.net", () => new Response("", { status: 429 })]]), state), payload()), "rate_limited");
+    await expectKind(threads.post(ctx(routeFetch([["https://graph.threads.net", () => new Response("", { status: 500 })]]), state), payload()), "transient");
+    await expectKind(threads.post(ctx(routeFetch([["https://graph.threads.net", () => json({ error: { code: 100, message: "Invalid parameter" } }, 400)]]), state), payload()), "rejected");
+  });
+
+  it("connect flow: threads.com login window, code exchanged at graph.threads.com, then a long-lived token", async () => {
+    const start = threads.oauth!.start({ state: "st", redirectUri: "https://emillavinen.com/api/auth/threads/callback" });
+    const url = new URL(start.url);
+    expect(url.origin + url.pathname).toBe("https://www.threads.com/oauth/authorize");
+    expect(url.searchParams.get("scope")).toBe("threads_basic,threads_content_publish");
+    const f = routeFetch([
+      ["https://graph.threads.com/oauth/access_token", () => json({ access_token: "short", user_id: 42 })],
+      ["https://graph.threads.net/access_token", () => json({ access_token: "long", expires_in: 5184000 })],
+      ["https://graph.threads.net/v1.0/me", () => json({ id: "42", username: "emillavinen" })],
+    ]);
+    expect(await threads.oauth!.finish(ctx(f), { code: "c", redirectUri: "https://emillavinen.com/api/auth/threads/callback" })).toEqual({ account: "@emillavinen" });
+    expect(readCredentials<{ accessToken: string; userId: string }>(await getState(db, "threads"))).toEqual({ accessToken: "long", userId: "42" });
+  });
+
   it("refreshes the long-lived token once it is over 24 hours old", async () => {
     const f = routeFetch([["https://graph.threads.net/refresh_access_token", () => json({ access_token: "tt2", expires_in: 5184000 })]]);
     const fresh = await threads.maintain!(ctx(f, await getState(db, "threads")));
@@ -364,6 +389,12 @@ describe("LinkedIn", () => {
     await expectKind(linkedin.post(ctx(api(() => new Response("", { status: 401 })), await getState(db, "linkedin")), payload()), "auth");
     await expectKind(linkedin.post(ctx(api(() => new Response("", { status: 500 })), await getState(db, "linkedin")), payload()), "transient");
     await expectKind(linkedin.post(ctx(api(() => json({ message: "FIELD_LENGTH_TOO_LONG" }, 422)), await getState(db, "linkedin")), payload()), "rejected");
+  });
+
+  it("429 waits; a network failure on the publish call is ambiguous", async () => {
+    const state = await getState(db, "linkedin");
+    await expectKind(linkedin.post(ctx(api(() => new Response("", { status: 429, headers: { "retry-after": "120" } })), state), payload()), "rate_limited");
+    await expectKind(linkedin.post(ctx(api(netFail), state), payload()), "ambiguous");
   });
 
   it("is not configured without LINKEDIN_VERSION (never hardcoded)", async () => {
@@ -429,6 +460,7 @@ describe("Bluesky", () => {
     );
     expect(rl.retryAt?.getTime()).toBe(1790850000 * 1000);
     await expectKind(bluesky.post(ctx(pds(() => json({ error: "InternalServerError" }, 500))), payload()), "transient");
+    await expectKind(bluesky.post(ctx(pds(() => json({ error: "InvalidRequest", message: "Record/text must not be longer than 300 graphemes" }, 400))), payload()), "rejected");
     await expectKind(bluesky.post(ctx(pds(netFail)), payload()), "ambiguous");
   });
 });
@@ -458,6 +490,8 @@ describe("Tumblr", () => {
   it("maps errors", async () => {
     await expectKind(tumblr.post(ctx(routeFetch([blobRoute, ["https://api.tumblr.com", () => json({}, 401)]])), payload()), "auth");
     await expectKind(tumblr.post(ctx(routeFetch([blobRoute, ["https://api.tumblr.com", () => json({}, 400)]])), payload()), "rejected");
+    await expectKind(tumblr.post(ctx(routeFetch([blobRoute, ["https://api.tumblr.com", () => json({}, 429)]])), payload()), "rate_limited");
+    await expectKind(tumblr.post(ctx(routeFetch([blobRoute, ["https://api.tumblr.com", () => json({}, 503)]])), payload()), "transient");
     await expectKind(tumblr.post(ctx(routeFetch([blobRoute, ["https://api.tumblr.com", netFail]])), payload()), "ambiguous");
   });
 });

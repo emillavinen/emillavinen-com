@@ -1,7 +1,7 @@
 /**
  * Backlog download, run once on Emil's own computer:
  *
- *   pnpm pinterest:download -- https://www.pinterest.com/emillavinen/<board>/ [more boards] [--debug]
+ *   npm run pinterest:download -- https://www.pinterest.com/emillavinen/<board>/ [more boards] [--debug]
  *
  * Opens a visible Chromium window and waits for Emil to log in himself — the
  * script never asks for, sees or stores a password (the session lives only
@@ -11,7 +11,7 @@
  * dispatch-import/<board>/, and lists video pins, which are skipped.
  * Run it again to resume: pins already saved are not downloaded twice.
  *
- * Afterwards: `pnpm import -- dispatch-import`.
+ * Afterwards: `npm run import -- dispatch-import`.
  *
  * Selectors live in pinterest-selectors.ts. With --debug, the HTML and a
  * screenshot of every page that yields nothing are saved next to the
@@ -276,7 +276,7 @@ async function main() {
   const debug = args.includes("--debug");
   const boards = args.filter((a) => !a.startsWith("--"));
   if (boards.length === 0) {
-    console.error("Usage: pnpm pinterest:download -- <board URL> [<board URL>…] [--debug]");
+    console.error("Usage: npm run pinterest:download -- <board URL> [<board URL>…] [--debug]");
     process.exit(1);
   }
 
@@ -356,7 +356,7 @@ async function main() {
   } finally {
     await context.close();
   }
-  console.info("\nDone. Next: pnpm import -- dispatch-import");
+  console.info("\nDone. Next: npm run import -- dispatch-import");
 }
 
 main().catch((err) => {

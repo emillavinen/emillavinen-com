@@ -1,11 +1,11 @@
 /**
  * Backlog import: uploads a folder of images to the DISPATCH store.
  *
- *   pnpm import -- dispatch-import/<board>        one folder
- *   pnpm import -- dispatch-import                 every board folder inside
- *   pnpm import -- ~/Desktop/old-work --dry-run    show what would happen
+ *   npm run import -- dispatch-import/<board>        one folder
+ *   npm run import -- dispatch-import                 every board folder inside
+ *   npm run import -- ~/Desktop/old-work --dry-run    show what would happen
  *
- * With a manifest.json (written by `pnpm pinterest:download`) each entry
+ * With a manifest.json (written by `npm run pinterest:download`) each entry
  * becomes a work with the pin's title, description and date. Without one,
  * every image file becomes a work titled from its file name. Duplicates are
  * skipped — by pin id, or by the file's hash. Imported works show on the
@@ -146,7 +146,7 @@ async function main() {
   const dryRun = args.includes("--dry-run");
   const roots = args.filter((a) => !a.startsWith("--"));
   if (roots.length === 0) {
-    console.error("Usage: pnpm import -- <folder> [--dry-run]");
+    console.error("Usage: npm run import -- <folder> [--dry-run]");
     process.exit(1);
   }
 
@@ -154,6 +154,7 @@ async function main() {
   const { isBlobConfigured, blobStore } = await import("../../lib/dispatch/blob");
   const { sha256Hex } = await import("../../lib/dispatch/crypto");
   const { createWork, findBySource } = await import("../../lib/dispatch/works");
+  const { BlobBudgetError, blobUsage } = await import("../../lib/dispatch/budget");
 
   const db = await getDb();
   if (!db || (!isBlobConfigured() && !dryRun)) {
@@ -166,9 +167,17 @@ async function main() {
   const failed: string[] = [];
   const allVideos: string[] = [];
   const slugs: string[] = [];
+  let stopped = false;
+
+  const usage = await blobUsage(db, new Date());
+  console.info(
+    `Image storage this month: ${usage.puts} of ${usage.putBudget} operations, ${usage.mb} of ${usage.mbBudget} MB (each image uses 4 operations).`
+  );
 
   for (const root of roots) {
+    if (stopped) break;
     for (const folder of await foldersToImport(path.resolve(root))) {
+      if (stopped) break;
       const { entries, videos } = await entriesFor(folder);
       allVideos.push(...videos.map((v) => path.join(folder, v)));
       console.info(`\n${folder}: ${entries.length} images`);
@@ -209,6 +218,11 @@ async function main() {
           }
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);
+          if (err instanceof BlobBudgetError) {
+            console.info(`\n${message}\nStopped here. Run the same command next month to continue — works already imported are skipped.`);
+            stopped = true;
+            break;
+          }
           failed.push(`${entry.file}: ${message}`);
           console.warn(`  ! ${path.basename(entry.file)}: ${message}`);
         }

@@ -20,11 +20,20 @@ You'll need about an hour. Keep this page open and work down it.
    **Frankfurt (eu-central-1)** or **Stockholm**, whichever is offered nearest.
    When it asks which environments to connect, tick **all of them**
    (Production, Preview, Development). This adds `DATABASE_URL` for you.
-3. **Create** again → **Blob** → name it `dispatch` → connect it to **all
-   environments**. This adds `BLOB_READ_WRITE_TOKEN` for you.
+3. **Create** again → **Blob** → name it `dispatch`. If it asks for access,
+   choose **Public** (the platforms fetch the images by their address).
+   Connect it to **all environments**. This adds `BLOB_READ_WRITE_TOKEN` for you.
 
-Both are free at your volume. The database tables are created automatically
-the next time the site builds.
+Both are free. The database tables are created automatically the next time
+the site builds.
+
+**One limit to know about:** free Blob storage allows about 2,000 uploads and
+1 GB a month. Each image on the site is 4 uploads (four sizes), so roughly
+400 new images a month. Going over doesn't cost money, but Vercel then
+switches Blob off for 30 days, which would break the images. DISPATCH stops
+adding works just before that (`BLOB_MONTHLY_PUT_BUDGET`, `BLOB_STORAGE_BUDGET_MB`),
+tells you once, and carries on by itself the next month. The current numbers
+are at the bottom of /admin/connections.
 
 ---
 
@@ -247,7 +256,10 @@ The board feeds only show the latest ~25 pins. To bring in everything older:
    npm run import -- dispatch-import
    ```
    Every image becomes a work on the site, held back from the platforms.
-   Running it twice never creates duplicates. You can also import any folder
+   Running it twice never creates duplicates. It starts by showing how much of
+   this month's free image storage is left. A big backlog (more than about
+   350 images) stops when the month's allowance is used. Run the same command
+   next month and it carries on where it stopped. You can also import any folder
    of images (`npm run import -- ~/Desktop/old-work`); each file becomes a work
    titled from its file name. Add `--dry-run` to see what would happen first.
 

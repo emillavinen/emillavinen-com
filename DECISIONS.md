@@ -22,6 +22,8 @@ One line of reasoning per call made while building DISPATCH without stopping to 
 - **Raw SQL passes timestamps as ISO text.** Found by running against a real Postgres driver: Drizzle maps dates only for typed columns, not for raw `sql` parameters.
 - **Local development store:** a `localhost` `DATABASE_URL` uses `postgres-js`, and `pnpm dev:db` serves PGlite over TCP. `BLOB_READ_WRITE_TOKEN=local` writes images to `public/dispatch-local/`. Both are dev-only and let the whole thing run without Neon or Blob.
 
+- **Vercel Blob's free tier is guarded.** Hobby includes 2,000 advanced operations (each `put`) and 1 GB a month, and going over locks Blob for 30 days instead of billing. DISPATCH counts its own uploads (4 per image, plus the drop page's raw uploads) per UTC month, and the bytes it stores. It stops adding works at 1,600 operations / 900 MB (both configurable), leaving room for dashboard browsing, which also counts. A paused pin keeps its place without burning an attempt, Emil gets one alert, and ingestion resumes by itself.
+
 ## Images
 
 - **sharp rotates from EXIF first, then converts to sRGB, flattens onto white and writes no metadata** (no EXIF, GPS, XMP or ICC). The tests check each of these, including a CMYK source.
@@ -72,7 +74,7 @@ One line of reasoning per call made while building DISPATCH without stopping to 
 ## Notifications
 
 - **One summary per work once nothing is pending or posting.** It lists the deliveries touched since the work was queued, leaving out platforms Emil unticked. In dry run it shows the exact text, indented.
-- **Alerts fire on the first occurrence, then once a day while still open, then one line when resolved.** An `unknown` delivery stays open until it is marked in admin.
+- **Alerts fire on the first occurrence, then once a day while still open, then one line when resolved.** An `unknown` delivery stays open until it is marked in admin. Every alert, reminder and resolution is also written to the event log.
 - **A pin that fails 5 times (or is not an image) is notified once and dropped.** A permanent per-pin alert would nag forever.
 - **The Resend fallback defaults to `onboarding@resend.dev`** (delivers to the Resend account owner); `NOTIFY_FROM` overrides it once a domain is verified.
 
@@ -87,7 +89,8 @@ One line of reasoning per call made while building DISPATCH without stopping to 
 
 ## Platforms
 
-- **Docs read 2026-09-30.** Are.na v3 OpenAPI; X `api.x.com/2/openapi.json`; Threads and LinkedIn official docs (LinkedIn current version 202609); Tumblr's docs repo on GitHub; `@atproto/api` 0.22. No adapter is marked "unverified".
+- **Docs read 2026-09-30/10-01.** Are.na v3 OpenAPI; X `api.x.com/2/openapi.json` and its OAuth 2.0 guide; Threads posting, long-lived-token and access-token pages; LinkedIn Posts/Images APIs (current version 202609) and its OpenID discovery document; Tumblr's docs repo on GitHub; `@atproto/api` 0.22. Every endpoint used is from those pages, so no adapter is marked "unverified". Still, only Are.na's and X's read endpoints were exercised live (below), and no adapter has posted for real.
+- **Threads hosts follow each page literally:** the login window is `www.threads.com/oauth/authorize` and the code exchange `graph.threads.com/oauth/access_token` (the access-token docs); posting and refresh use `graph.threads.net` (the posting docs). Both domains answer.
 - **Live checks, read-only only:** the Are.na token reached `/v3/me` and the channel; the X OAuth 2.0 access token reached `/2/users/me` (@emillavinen). Nothing was posted: posting is the go-live step.
 - **X: the provided files are OAuth 2.0 credentials** (client id/secret, user access and refresh token). The OAuth 1.0a API key and access token secret aren't among them, so X runs on OAuth 2.0 until the four keys are set. Both paths are built.
 - **X: the refresh token was deliberately not used here.** X rotates it, and using it would have invalidated the one Emil saved. `X_OAUTH2_REFRESH_TOKEN` can seed the store once; Connect in admin is the normal path.

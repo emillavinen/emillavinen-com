@@ -179,6 +179,23 @@ describe("DISPATCH end to end (dry run, mocked clock)", () => {
     expect(row.active).toBe(false);
   }, 120_000);
 
+  it("stops adding works before Vercel Blob's free monthly limit, alerts once, and resumes next month", async () => {
+    process.env.BLOB_MONTHLY_PUT_BUDGET = "8"; // room for two works (4 uploads each)
+    await runDispatch(deps(T0), "test");
+    await runDispatch(deps(new Date(T0.getTime() + HOUR)), "test");
+    expect(await db.select().from(works)).toHaveLength(2);
+    const waiting = await db.select().from(feedItems).where(eq(feedItems.boardUrl, BOARD));
+    expect(waiting.filter((i) => i.processedAt === null)).toHaveLength(23);
+    expect(waiting.every((i) => i.attempts === 0)).toBe(true); // not the pins' fault
+    expect(notifier.messages.filter((m) => m.includes("image storage operations are used up"))).toHaveLength(1);
+
+    // A new month: the rest come in, and the alert clears.
+    process.env.BLOB_MONTHLY_PUT_BUDGET = "1600";
+    await runDispatch(deps(new Date("2026-11-01T08:00:00Z")), "test");
+    expect(await db.select().from(works)).toHaveLength(25);
+    expect(notifier.messages.at(-1)).toMatch(/room again/);
+  }, 120_000);
+
   it("the first successful read is the baseline even if earlier reads failed", async () => {
     feeds[`${BOARD}.rss`] = () => new Response("oops", { status: 500 });
     await runDispatch(deps(T0), "test");

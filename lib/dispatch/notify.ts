@@ -2,6 +2,7 @@ import { and, eq, isNull, lt, or } from "drizzle-orm";
 import { env, logOnce } from "./config";
 import type { Db } from "./db/client";
 import { alerts } from "./db/schema";
+import { logEvent } from "./store";
 
 /**
  * Notifications go to Telegram, or to email through Resend when Telegram is
@@ -65,6 +66,12 @@ export interface AlertCtx {
 
 const DAY = 86_400_000;
 
+/** Every alert that goes out is also written to the event log. */
+async function sendAlert(ctx: AlertCtx, key: string, kind: "alert" | "alert_reminder" | "alert_resolved" | "notice", message: string): Promise<void> {
+  await ctx.notifier.send(message);
+  await logEvent(ctx.db, ctx.now, { type: kind, message, data: { key } });
+}
+
 /**
  * Alerts fire on change, not on every run: the first time a condition is
  * raised, one reminder a day while it stays active, and one line when it
@@ -79,7 +86,7 @@ export async function raiseAlert(ctx: AlertCtx, key: string, message: string): P
     .onConflictDoNothing()
     .returning({ key: alerts.key });
   if (inserted.length > 0) {
-    await ctx.notifier.send(message);
+    await sendAlert(ctx, key, "alert", message);
     return;
   }
   const reactivated = await db
@@ -88,7 +95,7 @@ export async function raiseAlert(ctx: AlertCtx, key: string, message: string): P
     .where(and(eq(alerts.key, key), eq(alerts.active, false)))
     .returning({ key: alerts.key });
   if (reactivated.length > 0) {
-    await ctx.notifier.send(message);
+    await sendAlert(ctx, key, "alert", message);
     return;
   }
   await db.update(alerts).set({ message }).where(eq(alerts.key, key));
@@ -107,7 +114,7 @@ async function remindIfDue(ctx: AlertCtx, key: string): Promise<void> {
       )
     )
     .returning({ message: alerts.message });
-  if (claimed.length > 0) await ctx.notifier.send(`Still open: ${claimed[0].message}`);
+  if (claimed.length > 0) await sendAlert(ctx, key, "alert_reminder", `Still open: ${claimed[0].message}`);
 }
 
 export async function resolveAlert(ctx: AlertCtx, key: string, message?: string): Promise<void> {
@@ -116,7 +123,10 @@ export async function resolveAlert(ctx: AlertCtx, key: string, message?: string)
     .set({ active: false, resolvedAt: ctx.now })
     .where(and(eq(alerts.key, key), eq(alerts.active, true)))
     .returning({ message: alerts.message });
-  if (resolved.length > 0 && message) await ctx.notifier.send(message);
+  if (resolved.length > 0) {
+    if (message) await sendAlert(ctx, key, "alert_resolved", message);
+    else await logEvent(ctx.db, ctx.now, { type: "alert_resolved", message: resolved[0].message, data: { key } });
+  }
 }
 
 /** A one-off notice that should never repeat (e.g. a pin that could not be imported). */
@@ -126,7 +136,7 @@ export async function notifyOnce(ctx: AlertCtx, key: string, message: string): P
     .values({ key, message, active: false, firstAt: ctx.now, lastSentAt: ctx.now, resolvedAt: ctx.now })
     .onConflictDoNothing()
     .returning({ key: alerts.key });
-  if (inserted.length > 0) await ctx.notifier.send(message);
+  if (inserted.length > 0) await sendAlert(ctx, key, "notice", message);
 }
 
 /** One daily reminder for every alert still open, including ones no run re-raises. */

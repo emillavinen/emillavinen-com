@@ -400,6 +400,17 @@ describe("summaries and alerts", () => {
     expect(notifier.messages.filter((m) => m.startsWith("Still open:"))).toHaveLength(1);
   });
 
+  it("every alert that goes out is also in the event log", async () => {
+    fakes.x.behaviour = () => {
+      throw new PlatformError("auth", "revoked");
+    };
+    await newWork("Poster", T0, { mode: "queue", platforms: ["x"] });
+    await makeAllDue(T0);
+    await runDispatch(deps(T0), "test");
+    const logged = await db.select().from(events).where(eq(events.type, "alert"));
+    expect(logged.map((e) => e.message)).toContain(notifier.messages.find((m) => m.startsWith("X needs attention")));
+  });
+
   it("the daily Vercel run alerts when the hourly GitHub trigger has gone quiet", async () => {
     await runDispatch(deps(T0), "vercel-cron");
     expect(notifier.messages.some((m) => m.includes("hourly GitHub trigger has not run yet"))).toBe(true);

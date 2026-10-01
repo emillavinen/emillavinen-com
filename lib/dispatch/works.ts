@@ -1,5 +1,6 @@
 import { and, asc, desc, eq, inArray, like, or, sql } from "drizzle-orm";
 import type { BlobStore } from "./blob";
+import { reserveBlob } from "./budget";
 import { PLATFORMS, type Platform } from "./config";
 import { allStates } from "./credentials";
 import type { Db } from "./db/client";
@@ -72,6 +73,8 @@ export interface NewWorkInput {
   images: { buffer: Buffer; alt?: string }[];
   /** Used when title is empty. */
   fallbackTitle?: string;
+  /** Blob operations already spent on this work elsewhere (the drop page's raw uploads). */
+  extraBlobPuts?: number;
 }
 
 export type QueueChoice = { mode: "held" } | { mode: "queue"; platforms?: Platform[] };
@@ -116,6 +119,10 @@ export async function createWork(
 
   const processed: ImageVariants[] = [];
   for (const image of input.images) processed.push(await processImage(image.buffer));
+
+  // Stay inside Vercel Blob's free monthly allowance (see budget.ts).
+  const bytes = processed.reduce((sum, v) => sum + Object.values(v).reduce((s, variant) => s + variant.buffer.length, 0), 0);
+  await reserveBlob(db, now, processed.length * 4 + (input.extraBlobPuts ?? 0), bytes);
 
   const workId = crypto.randomUUID();
   const uploaded: string[] = [];

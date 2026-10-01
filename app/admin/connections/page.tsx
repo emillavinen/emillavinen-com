@@ -4,6 +4,7 @@ import { PLATFORMS, PLATFORM_LABELS, capFor, pinterestBoards } from "@/lib/dispa
 import { getDb } from "@/lib/dispatch/db/client";
 import { alerts, pinterestBoards as boardsTable } from "@/lib/dispatch/db/schema";
 import { ADAPTERS } from "@/lib/dispatch/platforms";
+import { blobUsage } from "@/lib/dispatch/budget";
 import { recentEvents } from "@/lib/dispatch/runner";
 import { envSettings, getSettings } from "@/lib/dispatch/store";
 import { platformConfig } from "@/lib/dispatch/works";
@@ -58,12 +59,13 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
     );
   }
 
-  const [settings, config, events, openAlerts, boards] = await Promise.all([
+  const [settings, config, events, openAlerts, boards, usage] = await Promise.all([
     getSettings(db),
     platformConfig(db),
     recentEvents({ db }, 40),
     db.select().from(alerts).where(eq(alerts.active, true)).orderBy(desc(alerts.firstAt)),
     db.select().from(boardsTable),
+    blobUsage(db, new Date()),
   ]);
   const envDefaults = envSettings();
   const boardsByUrl = new Map(boards.map((b) => [b.url, b]));
@@ -194,6 +196,12 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
           </tbody>
         </table>
       )}
+
+      <h2>Image storage</h2>
+      <p className="adm-small">
+        {usage.puts} of {usage.putBudget} uploads this month · {usage.mb} of {usage.mbBudget} MB stored
+        <span className="adm-muted"> — Vercel Blob free tier; new works pause before the limit (each image is 4 uploads).</span>
+      </p>
 
       <h2>Recent events</h2>
       <div className="adm-scroll">

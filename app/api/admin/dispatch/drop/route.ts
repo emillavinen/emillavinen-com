@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/dispatch/admin";
 import { fetchBytes, isBlobConfigured } from "@/lib/dispatch/blob";
+import { BlobBudgetError } from "@/lib/dispatch/budget";
 import { parseDropInput } from "@/lib/dispatch/drop";
 import { titleFromFileName, UnsupportedImageError } from "@/lib/dispatch/images";
 import { serverDeps } from "@/lib/dispatch/next";
@@ -45,13 +46,14 @@ export async function POST(request: Request) {
         year: input.year,
         tags: input.tags,
         images,
+        extraBlobPuts: input.uploads.length,
       },
       { mode: "queue", platforms: input.platforms }
     );
     await logEvent(deps.db, deps.now, { type: "work_drop", workId: work.id, message: work.title });
     return NextResponse.json({ id: work.id, slug: work.slug, title: work.title });
   } catch (err) {
-    const status = err instanceof UnsupportedImageError ? 400 : 500;
+    const status = err instanceof UnsupportedImageError ? 400 : err instanceof BlobBudgetError ? 507 : 500;
     console.error("[dispatch] drop failed", err);
     return NextResponse.json({ error: err instanceof Error ? err.message : "Could not create the work" }, { status });
   } finally {
