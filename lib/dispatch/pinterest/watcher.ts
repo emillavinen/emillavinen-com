@@ -5,6 +5,7 @@ import { feedItems, pinterestBoards as boardsTable } from "../db/schema";
 import { UnsupportedImageError } from "../images";
 import { notifyOnce, raiseAlert, resolveAlert, type Notifier } from "../notify";
 import { logEvent } from "../store";
+import { truncate } from "../platforms/format";
 import { createWork, findBySource, type WorkDeps } from "../works";
 import { boardFeedUrl, imageCandidates, normalizeBoardUrl, parseFeed } from "./feed";
 
@@ -103,11 +104,30 @@ export async function readBoards(deps: WatcherDeps): Promise<{ boards: number; n
   return { boards: boards.length, newItems };
 }
 
-function titleFor(item: { title: string; description: string; boardTitle: string | null }): { title: string; fallback: string } {
-  const firstLine = item.description.split(/(?<=[.!?])\s|\n/)[0]?.trim() ?? "";
+const MAX_TITLE = 90;
+
+/**
+ * Title and caption from a pin. A blank title falls back to the first
+ * sentence of the description, then the board's name. Pin titles that are
+ * really paragraphs are shortened, and the full text becomes the caption
+ * when the pin has none.
+ */
+export function titleAndCaption(item: { title: string; description: string; boardTitle: string | null }): {
+  title: string;
+  fallback: string;
+  caption: string;
+} {
+  let title = item.title.trim();
+  let caption = item.description && item.description !== title ? item.description.trim() : "";
+  if (title.length > MAX_TITLE) {
+    if (!caption) caption = title;
+    title = truncate(title, MAX_TITLE);
+  }
+  const firstSentence = item.description.split(/(?<=[.!?])\s|\n/)[0]?.trim() ?? "";
   return {
-    title: item.title,
-    fallback: (firstLine.length > 80 ? `${firstLine.slice(0, 79).trimEnd()}…` : firstLine) || item.boardTitle || "Untitled",
+    title,
+    fallback: (firstSentence.length > MAX_TITLE ? truncate(firstSentence, MAX_TITLE) : firstSentence) || item.boardTitle || "Untitled",
+    caption,
   };
 }
 
@@ -151,8 +171,7 @@ export async function processFeedItems(deps: WatcherDeps, deadline: number): Pro
       let workId = existing?.id;
       if (!existing) {
         const buffer = await downloadPinImage(next.imageUrl, deps.fetch);
-        const { title, fallback } = titleFor(next);
-        const caption = next.description && next.description !== next.title ? next.description : "";
+        const { title, fallback, caption } = titleAndCaption(next);
         const { work } = await createWork(
           deps,
           {

@@ -208,9 +208,11 @@ export const x: Adapter = {
   maxImages: 4,
 
   missingEnv() {
-    if (oauth1Keys()) return [];
-    const missing = ["X_CLIENT_ID", "DISPATCH_ENCRYPTION_KEY"].filter((n) => !env(n));
-    return missing.length > 0 ? ["X_API_KEY", "X_API_SECRET", "X_ACCESS_TOKEN", "X_ACCESS_TOKEN_SECRET"].filter((n) => !env(n)).concat(missing) : [];
+    // Either the four OAuth 1.0a keys, or an OAuth 2.0 client to connect with.
+    if (oauth1Keys() || (oauth2Client() && canEncrypt())) return [];
+    const oauth1 = ["X_API_KEY", "X_API_SECRET", "X_ACCESS_TOKEN", "X_ACCESS_TOKEN_SECRET"].filter((n) => !env(n));
+    const oauth2 = ["X_CLIENT_ID", "DISPATCH_ENCRYPTION_KEY"].filter((n) => !env(n));
+    return [`${oauth1.join(", ")} — or ${oauth2.join(" + ")} and Connect`];
   },
 
   configured(state) {

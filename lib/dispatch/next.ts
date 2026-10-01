@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { revalidatePath } from "next/cache";
-import { vercelBlobStore } from "./blob";
+import { blobStore } from "./blob";
 import { env, logOnce } from "./config";
 import { getDb } from "./db/client";
 import { defaultNotifier } from "./notify";
@@ -27,7 +27,7 @@ export async function serverDeps(): Promise<RunnerDeps | null> {
   return {
     db,
     now: new Date(),
-    blob: vercelBlobStore(),
+    blob: blobStore(),
     rand: Math.random,
     revalidate: revalidatePaths,
     fetch: globalThis.fetch.bind(globalThis),

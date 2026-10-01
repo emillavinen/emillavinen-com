@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, gte, inArray, isNotNull, isNull, lt, lte, max, notExists, or, sql } from "drizzle-orm";
 import { capFor, envInt, isPlatform, PLATFORM_LABELS, siteUrl, type Platform } from "./config";
 import { ensureState, setStatus } from "./credentials";
-import { assets, counters, deliveries, events, works, type Delivery, type Work } from "./db/schema";
+import { assets, counters, deliveries, events, platformState, works, type Delivery, type Work } from "./db/schema";
 import { raiseAlert, resolveAlert, sendDueReminders, type Notifier } from "./notify";
 import { processFeedItems, readBoards } from "./pinterest/watcher";
 import { ADAPTERS } from "./platforms";
@@ -164,6 +164,9 @@ async function syncPlatforms(deps: RunnerDeps, deadline: number): Promise<Platfo
       continue;
     }
     if (!state || state.status === "disabled") await enablePlatform(db, platform, now);
+    // Every run, not only on enabling: works written by another process (the
+    // local backlog import) may lack a row for a platform enabled here.
+    else await backfillHeld(db, platform, now);
     try {
       const result = await adapter.maintain?.(adapterCtx(deps, config, platform, deadline));
       const expiresAt = result && result.expiresAt;
@@ -194,8 +197,9 @@ async function syncPlatforms(deps: RunnerDeps, deadline: number): Promise<Platfo
  * gets a `held` delivery for it (backlog, never pending — no floods).
  */
 export async function enablePlatform(db: RunnerDeps["db"], platform: Platform, now: Date): Promise<void> {
-  await setStatus(db, platform, now, "ok", null);
+  // Backfill first: if it fails, the platform stays disabled and the next run tries again.
   await backfillHeld(db, platform, now);
+  await setStatus(db, platform, now, "ok", null);
   await logEvent(db, now, { type: "platform_enabled", platform, message: "existing works get held deliveries (backlog)" });
 }
 
@@ -217,7 +221,7 @@ export async function checkPlatform(deps: RunnerDeps, config: PlatformConfig, pl
   try {
     const result = await adapter.check(adapterCtx(deps, config, platform, deadline));
     await setStatus(db, platform, now, "ok", result.detail ?? null, { ok: true, checked: true });
-    await db.execute(sql`UPDATE platform_state SET account = ${result.account} WHERE platform = ${platform}`);
+    await db.update(platformState).set({ account: result.account }).where(eq(platformState.platform, platform));
     await resolveAlert({ db, now, notifier: deps.notifier }, `platform:${platform}`, `${label(platform)} checks out again — its queue resumes.`);
     return { ok: true as const, ...result };
   } catch (err) {
@@ -225,7 +229,7 @@ export async function checkPlatform(deps: RunnerDeps, config: PlatformConfig, pl
     if (err instanceof PlatformError && (err.kind === "auth" || err.kind === "credits")) {
       await pausePlatform(deps, platform, message);
     } else {
-      await db.execute(sql`UPDATE platform_state SET last_check_at = ${now} WHERE platform = ${platform}`);
+      await db.update(platformState).set({ lastCheckAt: now }).where(eq(platformState.platform, platform));
     }
     return { ok: false as const, message };
   }

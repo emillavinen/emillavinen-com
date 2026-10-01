@@ -13,8 +13,9 @@
     "generate-icons": "npx tsx scripts/generate-icons.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --env-file-if-exists=.env.local scripts/dispatch/migrate.mjs",
-    "import": "tsx --env-file-if-exists=.env.local scripts/dispatch/import.ts",
-    "pinterest:download": "tsx scripts/dispatch/pinterest-download.ts"
+    "import": "tsx scripts/dispatch/import.ts",
+    "pinterest:download": "tsx scripts/dispatch/pinterest-download.ts",
+    "dev:db": "pglite-server --db=.dispatch-dev/pglite --port=5433"
   },
   "dependencies": {
     "@atproto/api": "0.22.0",
@@ -40,6 +41,7 @@
     "next-mdx-remote": "6.0.0",
     "openai": "6.45.0",
     "otpauth": "9.5.1",
+    "postgres": "3.4.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sharp": "0.35.5",
@@ -48,6 +50,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.8",
+    "@electric-sql/pglite-socket": "0.2.11",
     "@tailwindcss/postcss": "4.3.1",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",

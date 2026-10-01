@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { titleAndCaption } from "@/lib/dispatch/pinterest/watcher";
 import { boardFeedUrl, decodeEntities, FeedFormatError, imageCandidates, normalizeBoardUrl, parseFeed } from "@/lib/dispatch/pinterest/feed";
 
 // A real board feed (pinterest.com/emillavinen/feargod-2010.rss, fetched 2026-09-30).
@@ -68,5 +69,21 @@ describe("Pinterest board RSS", () => {
 
   it("decodes numeric and named entities", () => {
     expect(decodeEntities("&#71922;&#x41;&amp;&quot;&unknown;")).toBe(`${String.fromCodePoint(71922)}A&"&unknown;`);
+  });
+});
+
+describe("pin titles", () => {
+  it("uses the pin title, else the description's first sentence, else the board", () => {
+    expect(titleAndCaption({ title: "Poster", description: "Two colours. Print.", boardTitle: "B" })).toEqual({ title: "Poster", fallback: "Two colours.", caption: "Two colours. Print." });
+    expect(titleAndCaption({ title: "", description: "", boardTitle: "GRANDEUR" }).fallback).toBe("GRANDEUR");
+    expect(titleAndCaption({ title: "Same", description: "Same", boardTitle: null }).caption).toBe("");
+  });
+
+  it("shortens paragraph-length titles and keeps the full text as the caption", () => {
+    const long = "Razor Wire Series CBT-60 Core Wire Diameter: 2.5mm Razor Tape Thickness: 0.5mm Blade Length: 60mm Blade Space: 100mm";
+    const out = titleAndCaption({ title: long, description: "", boardTitle: null });
+    expect(out.title.length).toBeLessThanOrEqual(90);
+    expect(out.title.endsWith("…")).toBe(true);
+    expect(out.caption).toBe(long);
   });
 });

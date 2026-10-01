@@ -68,14 +68,17 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ slu
         @media (min-width: 720px) {
           .piece { padding: var(--space-16) var(--space-8) var(--space-32); }
         }
-        .piece__images { display: flex; flex-direction: column; gap: var(--space-4); margin-bottom: var(--space-8); }
+        .piece__images { display: flex; flex-direction: column; align-items: center; gap: var(--space-6); margin-bottom: var(--space-12); }
+        /* Each image is as wide as the column allows but never taller than
+           most of the screen; its box is sized from the stored aspect ratio
+           (inline style), so nothing moves while it loads. */
         .piece__images img {
           display: block;
-          width: 100%;
+          max-width: 100%;
           height: auto;
           background: var(--color-bg-secondary);
         }
-        .piece__text { max-width: 620px; }
+        .piece__text { max-width: 620px; margin: 0 auto; }
         .piece__head {
           display: flex;
           justify-content: space-between;
@@ -136,6 +139,7 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ slu
             alt={image.alt}
             width={image.width}
             height={image.height}
+            style={{ width: `min(100%, calc(85svh * ${(image.width / image.height).toFixed(4)}))`, aspectRatio: `${image.width} / ${image.height}` }}
             loading={index === 0 ? "eager" : "lazy"}
             fetchPriority={index === 0 ? "high" : "auto"}
             decoding="async"

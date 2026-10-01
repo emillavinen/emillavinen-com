@@ -1,7 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { AdminNav, AdminStyles, Notice, StoreMissing, when } from "@/components/admin/dispatch/AdminChrome";
 import { PLATFORMS, PLATFORM_LABELS, capFor, pinterestBoards } from "@/lib/dispatch/config";
-import { canEncrypt } from "@/lib/dispatch/crypto";
 import { getDb } from "@/lib/dispatch/db/client";
 import { alerts, pinterestBoards as boardsTable } from "@/lib/dispatch/db/schema";
 import { ADAPTERS } from "@/lib/dispatch/platforms";
@@ -126,9 +125,9 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
                   </td>
                   <td>
                     <span className={`adm-chip adm-chip--${status}`}>{status.replace("_", " ")}</span>
-                    {state?.note && <div className="adm-small adm-muted">{state.note}</div>}
+                    {configured && state?.note && <div className="adm-small adm-muted">{state.note}</div>}
                     {!configured && missing.length > 0 && <div className="adm-small adm-muted">needs {missing.join(", ")}</div>}
-                    {!configured && missing.length === 0 && adapter.oauth && <div className="adm-small adm-muted">not connected</div>}
+                    {!configured && missing.length === 0 && adapter.oauth && <div className="adm-small adm-muted">not connected yet</div>}
                   </td>
                   <td className="adm-small">
                     {state?.account ?? "—"}
@@ -145,11 +144,10 @@ export default async function ConnectionsPage({ searchParams }: { searchParams: 
                           </button>
                         </form>
                       )}
-                      {adapter.oauth && (
+                      {adapter.oauth && missing.length === 0 && (
                         <a
-                          className={`adm-btn adm-btn--small adm-btn--quiet`}
+                          className="adm-btn adm-btn--small adm-btn--quiet"
                           href={`/api/admin/dispatch/connect/${platform}`}
-                          aria-disabled={!canEncrypt()}
                         >
                           {state?.credentials ? "Reconnect" : "Connect"}
                         </a>

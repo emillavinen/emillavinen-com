@@ -448,6 +448,17 @@ describe("backlog", () => {
     expect(await db.select().from(deliveries).where(and(eq(deliveries.platform, "tumblr"), eq(deliveries.status, "pending")))).toHaveLength(0);
   });
 
+  it("a work written where a platform was not configured (the local import) gets its held row on the next run", async () => {
+    await runDispatch(deps(T0), "test");
+    const saved = process.env.ARENA_TOKEN;
+    delete process.env.ARENA_TOKEN; // the import runs without the site's env
+    const imported = await newWork("Imported", T0, { mode: "held" });
+    expect((await rowsFor(imported.id)).arena).toBeUndefined();
+    process.env.ARENA_TOKEN = saved;
+    await runDispatch(deps(new Date(T0.getTime() + HOUR)), "test");
+    expect((await rowsFor(imported.id)).arena.status).toBe("held");
+  });
+
   it("BACKLOG_DRIP_PER_DAY moves held works into the queue, oldest first, up to the daily number", async () => {
     process.env.BACKLOG_DRIP_PER_DAY = "2";
     const oldest = await newWork("Oldest", T0, { mode: "held" }, { createdAt: new Date("2020-01-01T00:00:00Z") });

@@ -266,9 +266,11 @@ export async function backfillHeld(db: Db, platform: Platform, now: Date): Promi
     .update(deliveries)
     .set({ status: "held", skipReason: null, updatedAt: now })
     .where(and(eq(deliveries.platform, platform), eq(deliveries.status, "skipped"), eq(deliveries.skipReason, "disabled")));
+  // Raw SQL skips Drizzle's column mapping, so the timestamp goes in as ISO text.
+  const at = now.toISOString();
   await db.execute(sql`
     INSERT INTO deliveries (id, work_id, platform, status, attempts, created_at, updated_at)
-    SELECT gen_random_uuid(), w.id, ${platform}, 'held', 0, ${now}, ${now}
+    SELECT gen_random_uuid(), w.id, ${platform}, 'held', 0, ${at}::timestamptz, ${at}::timestamptz
     FROM works w
     WHERE NOT EXISTS (SELECT 1 FROM deliveries d WHERE d.work_id = w.id AND d.platform = ${platform})
     ON CONFLICT DO NOTHING
