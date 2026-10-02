@@ -12,6 +12,7 @@
     "generate-icons": "npx tsx scripts/generate-icons.ts"
   },
   "dependencies": {
+    "@neondatabase/serverless": "1.1.0",
     "@tailwindcss/typography": "^0.5.20",
     "@tiptap/core": "^3.27.1",
     "@tiptap/extension-character-count": "^3.27.1",
