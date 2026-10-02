@@ -12,6 +12,7 @@ const SECTIONS = [
   { href: "/admin/works", label: "Works" },
   { href: "/admin/drop", label: "Drop" },
   { href: "/admin/connections", label: "Connections" },
+  { href: "/admin/instagram", label: "Instagram" },
 ];
 
 export function AdminStyles() {

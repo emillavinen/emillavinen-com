@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
   const valid = await verifySessionToken(request.cookies.get(ADMIN_COOKIE)?.value, process.env.ADMIN_PASSWORD);
   if (!valid) {
     if (pathname.startsWith("/api/")) {
-      return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+      return NextResponse.json({ error: "Signed out. Reload the page and sign in." }, { status: 401 });
     }
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }

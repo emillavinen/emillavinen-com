@@ -49,6 +49,9 @@ export default async function AdminDashboard() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-12)" }}>
         <h1 style={{ fontSize: "var(--text-base)", fontWeight: 400, letterSpacing: "var(--tracking-widest)", textTransform: "uppercase", color: "var(--color-fg)", margin: 0 }}>Posts</h1>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-6)" }}>
+          <Link href="/admin/instagram" style={{ color: "var(--color-fg)", textDecoration: "none", fontSize: "var(--text-sm)" }}>
+            Instagram
+          </Link>
           <Link
             href="/admin/posts/new"
             style={{ padding: "var(--space-2) var(--space-6)", fontSize: "var(--text-sm)", fontFamily: "var(--font-sans)", background: "var(--color-fg)", color: "var(--color-bg)", textDecoration: "none", borderRadius: "var(--radius-md)" }}
