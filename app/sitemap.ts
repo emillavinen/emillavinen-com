@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/mdx";
 import { SITE_URL } from "@/lib/constants";
+import { getGalleryWorks } from "@/lib/dispatch/site";
 
 function scorePost(wordCount: number, tagCount: number, daysSince: number): { priority: number; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] } {
   let priority = 0.5;
@@ -18,7 +19,26 @@ function scorePost(wordCount: number, tagCount: number, daysSince: number): { pr
   return { priority: Math.round(Math.min(0.95, Math.max(0.1, priority)) * 100) / 100, changeFrequency };
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+// Regenerated hourly (and whenever DISPATCH adds a work) so new work pages
+// appear without a deploy.
+export const revalidate = 3600;
+
+async function workEntries(): Promise<MetadataRoute.Sitemap> {
+  try {
+    const works = await getGalleryWorks();
+    return works.map((work) => ({
+      url: `${SITE_URL}/work/${work.slug}`,
+      lastModified: work.createdAt,
+      changeFrequency: "yearly" as const,
+      priority: 0.6,
+    }));
+  } catch (err) {
+    console.error("[dispatch] sitemap: could not list works", err);
+    return [];
+  }
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = getAllPosts().map((post) => {
     const wordCount = post.content.trim().split(/\s+/).filter(Boolean).length;
     const daysSince = Math.floor((Date.now() - new Date(post.date).getTime()) / 86400000);
@@ -35,6 +55,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: SITE_URL,             lastModified: new Date(), changeFrequency: "weekly",  priority: 1.0 },
     { url: `${SITE_URL}/blog`,   lastModified: new Date(), changeFrequency: "weekly",  priority: 0.8 },
+    { url: `${SITE_URL}/work`,   lastModified: new Date(), changeFrequency: "weekly",  priority: 0.8 },
     ...posts,
+    ...(await workEntries()),
   ];
 }

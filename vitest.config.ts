@@ -8,6 +8,8 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./tests/setup.ts"],
+    // DISPATCH logs every event; keep test output to failures.
+    onConsoleLog: (log) => !log.startsWith("[dispatch]"),
   },
   resolve: {
     alias: { "@": path.resolve(__dirname, ".") },

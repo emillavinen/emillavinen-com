@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
@@ -51,16 +51,12 @@ export default function PostForm({ initialData, isNew = false }: PostFormProps) 
   const [errorMsg, setErrorMsg] = useState("");
   const autoSaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    if (isNew && !slugEdited) {
-      setForm((prev) => ({ ...prev, slug: slugify(prev.title) }));
-    }
-  }, [form.title, isNew, slugEdited]);
-
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
     if (name === "slug") setSlugEdited(true);
-    setForm((prev) => ({ ...prev, [name]: value }));
+    // A new post's slug follows its title until the slug is edited by hand.
+    const followTitle = name === "title" && isNew && !slugEdited;
+    setForm((prev) => ({ ...prev, [name]: value, ...(followTitle ? { slug: slugify(value) } : {}) }));
   }
 
   function handleContentChange(markdown: string) {
@@ -72,33 +68,30 @@ export default function PostForm({ initialData, isNew = false }: PostFormProps) 
     }
   }
 
-  const save = useCallback(
-    async (publish: boolean, silent = false) => {
-      if (!silent) setStatus("saving");
-      setErrorMsg("");
-      try {
-        const body = { ...form, published: publish };
-        const url = isNew ? "/api/admin/posts" : `/api/admin/posts/${form.slug}`;
-        const res = await fetch(url, {
-          method: isNew ? "POST" : "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}));
-          throw new Error(data.error ?? `HTTP ${res.status}`);
-        }
-        if (publish) await fetch("/api/admin/deploy", { method: "POST" });
-        setForm((prev) => ({ ...prev, published: publish }));
-        setStatus("saved");
-        if (isNew) router.push(`/admin/posts/${form.slug}/edit`);
-      } catch (err) {
-        setStatus("error");
-        setErrorMsg(err instanceof Error ? err.message : "Save failed");
+  async function save(publish: boolean, silent = false) {
+    if (!silent) setStatus("saving");
+    setErrorMsg("");
+    try {
+      const body = { ...form, published: publish };
+      const url = isNew ? "/api/admin/posts" : `/api/admin/posts/${form.slug}`;
+      const res = await fetch(url, {
+        method: isNew ? "POST" : "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? `HTTP ${res.status}`);
       }
-    },
-    [form, isNew, router]
-  );
+      if (publish) await fetch("/api/admin/deploy", { method: "POST" });
+      setForm((prev) => ({ ...prev, published: publish }));
+      setStatus("saved");
+      if (isNew) router.push(`/admin/posts/${form.slug}/edit`);
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg(err instanceof Error ? err.message : "Save failed");
+    }
+  }
 
   async function handleDelete() {
     if (!confirm(`Delete "${form.title}"? This cannot be undone.`)) return;

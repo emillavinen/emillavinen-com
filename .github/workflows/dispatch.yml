@@ -1,0 +1,48 @@
+# DISPATCH hourly trigger. Vercel Hobby runs cron at most once a day, so
+# this calls the runner every hour, 23 minutes past (GitHub delays jobs
+# queued on the hour). The daily Vercel cron in vercel.json is the backup,
+# and it alerts when this workflow has been quiet for more than six hours —
+# GitHub pauses scheduled workflows in public repos after 60 days without
+# commits.
+#
+# Needs the repository secret CRON_SECRET (the same value as in Vercel).
+# Optional repository variable DISPATCH_URL (default https://emillavinen.com).
+
+name: DISPATCH
+
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: dispatch
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call the runner
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          DISPATCH_URL: ${{ vars.DISPATCH_URL || 'https://emillavinen.com' }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::error::The CRON_SECRET repository secret is not set (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+          status=$(curl --silent --show-error --output response.json --write-out '%{http_code}' \
+            --max-time 90 --retry 2 --retry-delay 30 \
+            --request POST \
+            --header "Authorization: Bearer $CRON_SECRET" \
+            "$DISPATCH_URL/api/dispatch/run?trigger=github")
+          cat response.json
+          echo
+          if [ "$status" != "200" ]; then
+            echo "::error::The runner answered HTTP $status"
+            exit 1
+          fi

@@ -1,37 +1,40 @@
-import { createHash } from "crypto";
 import * as OTPAuth from "otpauth";
 import { NextRequest, NextResponse } from "next/server";
+import { ADMIN_COOKIE, createSessionToken, SESSION_TTL_MS } from "@/lib/admin-session";
+import { clientIp, isLoginBlocked, recordLoginFailure } from "@/lib/login-rate-limit";
 
-function sha256Hex(text: string): string {
-  return createHash("sha256").update(text).digest("hex");
-}
-
-function sessionToken(password: string): string {
-  return sha256Hex(password + "admin-session");
+async function signedIn(password: string) {
+  const response = NextResponse.json({ ok: true });
+  response.cookies.set(ADMIN_COOKIE, await createSessionToken(password), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: SESSION_TTL_MS / 1000,
+    path: "/",
+  });
+  return response;
 }
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
+  const body = await request.json().catch(() => ({}));
   const { password, totp } = body as { password?: string; totp?: string };
 
   if (!process.env.ADMIN_PASSWORD) {
     return NextResponse.json({ error: "ADMIN_PASSWORD not configured" }, { status: 500 });
   }
 
+  const ip = clientIp(request.headers);
+  if (await isLoginBlocked(ip)) {
+    return NextResponse.json({ error: "Too many attempts. Try again in 15 minutes." }, { status: 429 });
+  }
+
   if (password !== process.env.ADMIN_PASSWORD) {
+    await recordLoginFailure(ip);
     return NextResponse.json({ error: "Incorrect password." }, { status: 401 });
   }
 
   if (!process.env.TOTP_SECRET) {
-    const response = NextResponse.json({ ok: true });
-    response.cookies.set("admin_session", sessionToken(password), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 24 * 7,
-      path: "/",
-    });
-    return response;
+    return signedIn(password);
   }
 
   if (!totp) {
@@ -47,22 +50,15 @@ export async function POST(request: NextRequest) {
 
   const delta = totpObj.validate({ token: totp, window: 1 });
   if (delta === null) {
+    await recordLoginFailure(ip);
     return NextResponse.json({ error: "Incorrect authenticator code." }, { status: 401 });
   }
 
-  const response = NextResponse.json({ ok: true });
-  response.cookies.set("admin_session", sessionToken(password), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 60 * 60 * 24 * 7,
-    path: "/",
-  });
-  return response;
+  return signedIn(password);
 }
 
 export async function DELETE() {
   const response = NextResponse.json({ ok: true });
-  response.cookies.set("admin_session", "", { httpOnly: true, maxAge: 0, path: "/" });
+  response.cookies.set(ADMIN_COOKIE, "", { httpOnly: true, maxAge: 0, path: "/" });
   return response;
 }
