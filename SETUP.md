@@ -16,7 +16,10 @@ You'll need about an hour. Keep this page open and work down it.
 ## 1. Vercel: add the database and image storage
 
 1. Open [vercel.com](https://vercel.com) → the **emillavinen-com** project → **Storage**.
-2. **Create Database** → **Neon** (Serverless Postgres) → the free plan → region
+2. **Already done?** If Neon is already listed under Storage (the /admin/instagram
+   page uses it), skip to 3. DISPATCH shares that database; its tables don't
+   overlap the Instagram page's `igout_*` tables. Otherwise:
+   **Create Database** → **Neon** (Serverless Postgres) → the free plan → region
    **Frankfurt (eu-central-1)** or **Stockholm**, whichever is offered nearest.
    When it asks which environments to connect, tick **all of them**
    (Production, Preview, Development). This adds `DATABASE_URL` for you.
@@ -82,6 +85,12 @@ Useful defaults you can leave alone:
 ---
 
 ## 3. Telegram: where DISPATCH talks to you
+
+**Reusing a bot you already have works.** DISPATCH only sends messages, so it
+never gets in the way of another program using the same bot. Its messages
+start with "DISPATCH —" so you can tell them apart. Copy that bot's token and
+your chat id into `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`, and skip the
+three steps below.
 
 DISPATCH sends you one short message per new work (with links to each post,
 or why something didn't post), plus a message whenever something needs you.

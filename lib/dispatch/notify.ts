@@ -24,7 +24,8 @@ export function defaultNotifier(fetchImpl: typeof fetch = fetch): Notifier {
           const res = await fetchImpl(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chat_id: telegramChat, text: text.slice(0, 4000), disable_web_page_preview: true }),
+            // The bot may be shared with other projects: say who is talking.
+            body: JSON.stringify({ chat_id: telegramChat, text: `DISPATCH — ${text}`.slice(0, 4000), disable_web_page_preview: true }),
             signal: AbortSignal.timeout(10_000),
           });
           if (!res.ok) console.error(`[dispatch] telegram ${res.status}: ${await res.text().catch(() => "")}`);
